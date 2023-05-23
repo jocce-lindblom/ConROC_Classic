@@ -262,7 +262,7 @@ local optionMaxIds = ...;
 		ManaFeed = 14,
 		MasterConjuror = 15,
 		 
-		MasterDemonologist = 16
+		MasterDemonologist = 16,
 		MoltenCore = 17,
 
 		DemonicResilience = 18,
