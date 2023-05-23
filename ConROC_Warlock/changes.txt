@@ -1,3 +1,7 @@
+Ver 2.0.1
+	-Re-worked the code for the spellmenu
+	-Updated the wand support
+
 Ver 1.13.8
 	-Updated to WotLK spells and talents
 	-Added support for not showing all spellranks

@@ -40,14 +40,6 @@ local optionMaxIds = ...;
 		CurseofDoomRank2 = 30910,	
 		CurseofDoomRank3 = 47867,
 		CurseofExhaustion = 18223,
---[[		CurseofRecklessnessRank1 = 704,
-		CurseofRecklessnessRank2 = 7658,
-		CurseofRecklessnessRank3 = 7659,
-		CurseofRecklessnessRank4 = 11717,
-		CurseofRecklessnessRank5 = 27226,--]]
---[[		CurseofShadowRank1 = 17862,
-		CurseofShadowRank2 = 17937,
-		CurseofShadowRank3 = 27229,--]]
 		CurseofTonguesRank1 = 1714,
 		CurseofTonguesRank2 = 11719,
 		CurseoftheElementsRank1 = 1490,
@@ -84,11 +76,6 @@ local optionMaxIds = ...;
 		DrainLifeRank8 = 27220,	
 		DrainLifeRank9 = 47857,
 		DrainManaRank1 = 5138,
---[[		DrainManaRank2 = 6226,
-		DrainManaRank3 = 11703,
-		DrainManaRank4 = 11704,
-		DrainManaRank5 = 27221,
-		DrainManaRank6 = 30908,--]]
 		DrainSoulRank1 = 1120,
 		DrainSoulRank2 = 8288,
 		DrainSoulRank3 = 8289,
@@ -115,15 +102,11 @@ local optionMaxIds = ...;
 		SeedOfCorruptionRank1 = 27243,	
 		SeedOfCorruptionRank2 = 47835,	
 		SeedOfCorruptionRank3 = 47836,
-		SiphonLifeRank1 = 18265,
-		SiphonLifeRank2 = 18879,
-		SiphonLifeRank3 = 18880,
-		SiphonLifeRank4 = 18881,
-		SiphonLifeRank5 = 27264,
-		SiphonLifeRank6 = 30911,
 		UnstableAfflictionRank1 = 30108,
 		UnstableAfflictionRank2 = 30404,
 		UnstableAfflictionRank3 = 30405,
+		UnstableAfflictionRank4 = 47841,
+		UnstableAfflictionRank5 = 47843,
 	}
 	ids.Aff_Talent = {
 		ImprovedCurseofAgony = 1,
@@ -135,7 +118,7 @@ local optionMaxIds = ...;
 		ImprovedLifeTap = 6,
 		SoulSiphon = 7,
 		 
-		ImprovedFear = 8, --new
+		ImprovedFear = 8,
 		FelConcentration = 9,
 		AmplifyCurse = 10,
 		 
@@ -147,21 +130,21 @@ local optionMaxIds = ...;
 		SiphonLife = 15,
 		CurseofExhaustion = 16,
 		
-		ImprovedFelhunter = 17, -- new
+		ImprovedFelhunter = 17,
 		ShadowMastery = 18,
 		 
-		Eradication = 19, --new
+		Eradication = 19,
 		Contagion = 20,
 		DarkPact = 21,
 
 		ImprowedHowlofTerror = 22,
 		Malediction = 23,
 
-		DeathsEmbrace = 24, --new
+		DeathsEmbrace = 24,
 		UnstableAffliction = 25,
-		Pandemic = 26, --new
+		Pandemic = 26,
 
-		EverlastingAffliction = 27,  --new
+		EverlastingAffliction = 27,
 
 		Haunt = 28,
 	}		
@@ -209,10 +192,7 @@ local optionMaxIds = ...;
 		DemonArmorRank8 = 47889,
 		DemonicCircleSummon = 48018,	
 		DemonicCircleTeleport = 48020,
-		--DemonicSacrifice = 18788,
 		DetectInvisibility = 132,
-		--DetectInvisibility = 2970,
-		--DetectGreaterInvisibility = 11743,
 		EyeofKilrogg = 126,
 		FelArmorRank1 = 28176,
 		FelArmorRank2 = 28189,	
@@ -268,31 +248,31 @@ local optionMaxIds = ...;
 		FelSynergy = 4,
 		 
 		ImprovedHealthFunnel = 5,
-		DemonicBrutality = 6, --new
-		FelVitality = 7, --new
+		DemonicBrutality = 6,
+		FelVitality = 7,
 		 
 		ImprovedSayaad = 8, --new name from ImprovedSuccubus
-		SoulLink = 9, -- moved from tier 7
+		SoulLink = 9,
 		FelDomination = 10,
 		DemonicAegis = 11,
 
 		UnholyPower = 12,
 		MasterSummoner = 13,
 		 
-		ManaFeed = 14, -- moved from tier 6
+		ManaFeed = 14,
 		MasterConjuror = 15,
 		 
-		MasterDemonologist = 16, -- moved from tier 6
-		MoltenCore = 17, --new
+		MasterDemonologist = 16
+		MoltenCore = 17,
 
-		DemonicResilience = 18, -- moved from tier 7
-		DemonicEmpowerment = 19, --new
-		DemonicKnowledge = 20, -- moved from tier 7
+		DemonicResilience = 18,
+		DemonicEmpowerment = 19,
+		DemonicKnowledge = 20,
 
 		DemonicTactics = 21,
-		Decimation = 22, --new
+		Decimation = 22,
 
-		ImprovedDemonicTactics = 23, --new
+		ImprovedDemonicTactics = 23,
 		SummonFelguard = 24,
 
 		DemonicPact = 25,
@@ -306,11 +286,6 @@ local optionMaxIds = ...;
 		ChaosBoltRank3 = 59171,
 		ChaosBoltRank4 = 59172,
 		ConflagrateRank1 = 17962,
---[[		ConflagrateRank2 = 18930, -- made into one rank
-		ConflagrateRank3 = 18931,
-		ConflagrateRank4 = 18932,
-		ConflagrateRank5 = 27266,
-		ConflagrateRank6 = 30912,--]]
 		HellfireRank1 = 1949,
 		HellfireRank2 = 11683,
 		HellfireRank3 = 11684,
@@ -382,42 +357,41 @@ local optionMaxIds = ...;
 	}
 	ids.Dest_Talent = {
 		ImprovedShadowBolt = 1,
-		Bane = 2, --moved from tier 2
+		Bane = 2,
 		 
 		Aftermath = 3,
-		MoltenSkin = 4, --new
-		Cataclysm = 5, -- moved from tier 1
+		MoltenSkin = 4,
+		Cataclysm = 5,
 		 
-		DemonicPower = 6, --ImprovedFirebolt = 5,
+		DemonicPower = 6,
 		Shadowburn = 7,
-		Ruin = 8, -- moved from tier 5
-		--ImprovedLastofPain = 6,
+		Ruin = 8,		
 		 
 		Intensity = 9,
 		DestructiveReach = 10,
 		ImprovedSearingPain = 11,
 		
-		Backlash = 12, --moved from tier 7
+		Backlash = 12,
 		ImprovedImmolate = 13,
-		Devastation = 14, --moved from tier 3
+		Devastation = 14,
 		 
 		NetherProtection = 15,
 		Emberstorm = 16,
 		 
 		Conflagrate = 18,
 		SoulLeech = 19,
-		Pyroclasm = 20, --moved from tier 5
+		Pyroclasm = 20,
 
 		ShadowAndFlame = 21,
-		ImprovedSoulLeech = 22, --new
+		ImprovedSoulLeech = 22,
 
-		Backdraft = 23, --new
+		Backdraft = 23,
 		Shadowfury = 24,
-		EmpoweredImp = 25, --new
+		EmpoweredImp = 25,
 
-		FireAndBrimstone = 26, --new
+		FireAndBrimstone = 26,
 
-		ChaosBolt = 27, --new
+		ChaosBolt = 27,
 	}
 --Pet
 	ids.Pet = {

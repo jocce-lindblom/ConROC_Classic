@@ -17,19 +17,13 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 
 	-- test
 	if GetNumTalents(Spec.Affliction) > (GetNumTalents(Spec.Demonology) or GetNumTalents(Spec.Destruction)) then
-		ConROC:Warnings("Dots, dots, more dots!!! (Affliction)", true);		
-		--UIErrorsFrame:AddMessage("Dots, dots, more dots!!! (Affliction)", 1.0, 0.0, 0.0, 53, 5);
-		--print("Spec: Affliction");
+		ConROC:Warnings("Dots, dots, more dots!!! (Affliction)", true);
 	end
 	if GetNumTalents(Spec.Demonology) > (GetNumTalents(Spec.Affliction) or GetNumTalents(Spec.Destruction)) then
-		ConROC:Warnings("Work Demon, Work!!! (Demonology)", true);		
-		--UIErrorsFrame:AddMessage("Work Demon, Work!!! (Demonology)", 1.0, 0.0, 0.0, 53, 5);
-		--print("Spec: Demonology");
+		ConROC:Warnings("Work Demon, Work!!! (Demonology)", true);
 	end
 	if GetNumTalents(Spec.Destruction) > (GetNumTalents(Spec.Demonology) or GetNumTalents(Spec.Affliction)) then
-		ConROC:Warnings("Burn baby, Burn!!! (Destruction)", true);		
-		--UIErrorsFrame:AddMessage("Burn baby, Burn!!! (Destruction)", 1.0, 0.0, 0.0, 53, 5);
-		--print("Spec: Destruction");
+		ConROC:Warnings("Burn baby, Burn!!! (Destruction)", true);
 	end
 	--
 
@@ -38,8 +32,6 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	local _Corruption = Aff_Ability.CorruptionRank1;
 	local _CurseofAgony = Aff_Ability.CurseofAgonyRank1;
 	local _CurseofDoom = Aff_Ability.CurseofDoomRank1;
-	--local _CurseofRecklessness = Aff_Ability.CurseofRecklessnessRank1;
-	--local _CurseofShadow = Aff_Ability.CurseofShadowRank1;
 	local _CurseofTongues = Aff_Ability.CurseofTonguesRank1;
 	local _CurseofExhaustion = ids.Aff_Ability.CurseofExhaustion;
 	local _CurseoftheElements = Aff_Ability.CurseoftheElementsRank1;
@@ -54,7 +46,6 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	local _HowlofTerror = Aff_Ability.HowlofTerrorRank1;
 	local _LifeTap = Aff_Ability.LifeTapRank1;
 	local _SeedOfCorruption = Aff_Ability.SeedOfCorruptionRank1;
-	--local _SiphonLife = Aff_Ability.SiphonLifeRank1;
 	local _UnstableAffliction = Aff_Ability.UnstableAfflictionRank1;
 --Demonology
 	local _Banish = Demo_Ability.BanishRank1;
@@ -102,10 +93,7 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 
 	if IsSpellKnown(Aff_Ability.CurseofDoomRank3) then _CurseofDoom = Aff_Ability.CurseofDoomRank3;	
 	elseif IsSpellKnown(Aff_Ability.CurseofDoomRank2) then _CurseofDoom = Aff_Ability.CurseofDoomRank2; end
---[[
-	if IsSpellKnown(Aff_Ability.CurseofShadowRank3) then _CurseofShadow = Aff_Ability.CurseofShadowRank3;
-	elseif IsSpellKnown(Aff_Ability.CurseofShadowRank2) then _CurseofRecklessness = Aff_Ability.CurseofShadowRank2; end
---]]
+
 	if IsSpellKnown(Aff_Ability.CurseofTonguesRank2) then _CurseofTongues = Aff_Ability.CurseofTonguesRank2; end
 
 	if IsSpellKnown(Aff_Ability.CurseoftheElementsRank5) then _CurseoftheElements = Aff_Ability.CurseoftheElementsRank5;	
@@ -167,18 +155,13 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	elseif IsSpellKnown(Aff_Ability.LifeTapRank4) then _LifeTap = Aff_Ability.LifeTapRank4;
 	elseif IsSpellKnown(Aff_Ability.LifeTapRank3) then _LifeTap = Aff_Ability.LifeTapRank3;
 	elseif IsSpellKnown(Aff_Ability.LifeTapRank2) then _LifeTap = Aff_Ability.LifeTapRank2; end
---[[
-	if IsSpellKnown(Aff_Ability.SiphonLifeRank6) then _SiphonLife = Aff_Ability.SiphonLifeRank6;
-	elseif IsSpellKnown(Aff_Ability.SiphonLifeRank5) then _SiphonLife = Aff_Ability.SiphonLifeRank5;
-	elseif IsSpellKnown(Aff_Ability.SiphonLifeRank4) then _SiphonLife = Aff_Ability.SiphonLifeRank4;
-	elseif IsSpellKnown(Aff_Ability.SiphonLifeRank3) then _SiphonLife = Aff_Ability.SiphonLifeRank3;
-	elseif IsSpellKnown(Aff_Ability.SiphonLifeRank2) then _SiphonLife = Aff_Ability.SiphonLifeRank2; end
---]]
-	if IsSpellKnown(Aff_Ability.UnstableAfflictionRank3) then _UnstableAffliction = Aff_Ability.UnstableAfflictionRank3;
+
+	if IsSpellKnown(Aff_Ability.UnstableAfflictionRank5) then _UnstableAffliction = Aff_Ability.UnstableAfflictionRank5;
+	elseif IsSpellKnown(Aff_Ability.UnstableAfflictionRank4) then _UnstableAffliction = Aff_Ability.UnstableAfflictionRank4;
+	elseif IsSpellKnown(Aff_Ability.UnstableAfflictionRank3) then _UnstableAffliction = Aff_Ability.UnstableAfflictionRank3;
 	elseif IsSpellKnown(Aff_Ability.UnstableAfflictionRank2) then _UnstableAffliction = Aff_Ability.UnstableAfflictionRank2; end
 
 	--Demonology
-	
 	if IsSpellKnown(Demo_Ability.BanishRank2) then _Banish = Demo_Ability.BanishRank2; end
 
 	if IsSpellKnown(Demo_Ability.CreateFirestoneRank7) then _CreateFirestone = Demo_Ability.CreateFirestoneRank7;	
@@ -207,26 +190,15 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	elseif IsSpellKnown(Demo_Ability.CreateSpellstoneRank3) then _CreateSpellstone = Demo_Ability.CreateSpellstoneRank3;
 	elseif IsSpellKnown(Demo_Ability.CreateSpellstoneRank2) then _CreateSpellstone = Demo_Ability.CreateSpellstoneRank2; end
 	
-	--if IsSpellKnown(Demo_Ability.DetectGreaterInvisibility) then _DetectInvisibility = Demo_Ability.DetectGreaterInvisibility;
-	--elseif IsSpellKnown(Demo_Ability.DetectInvisibility) then _DetectInvisibility = Demo_Ability.DetectInvisibility; end
-	
 	--renamed from EnslaveDemon to Subjugate Demon	
 	if IsSpellKnown(Demo_Ability.SubjagateDemonRank3) then _SubjagateDemon = Demo_Ability.SubjagateDemonRank3;
 	elseif IsSpellKnown(Demo_Ability.SubjagateDemonRank2) then _SubjagateDemon = Demo_Ability.SubjagateDemonRank2; end
 
 	--Destruction
-
 	if IsSpellKnown(Dest_Ability.ChaosBoltRank4) then _ChaosBolt = Dest_Ability.ChaosBoltRank4;
 	elseif IsSpellKnown(Dest_Ability.ChaosBoltRank3) then _ChaosBolt = Dest_Ability.ChaosBoltRank3;
 	elseif IsSpellKnown(Dest_Ability.ChaosBoltRank2) then _ChaosBolt = Dest_Ability.ChaosBoltRank2; end
 
---[[ --now only one rank
-	if IsSpellKnown(Dest_Ability.ConflagrateRank6) then _Conflagrate = Dest_Ability.ConflagrateRank6;
-	elseif IsSpellKnown(Dest_Ability.ConflagrateRank5) then _Conflagrate = Dest_Ability.ConflagrateRank5;
-	elseif IsSpellKnown(Dest_Ability.ConflagrateRank4) then _Conflagrate = Dest_Ability.ConflagrateRank4;
-	elseif IsSpellKnown(Dest_Ability.ConflagrateRank3) then _Conflagrate = Dest_Ability.ConflagrateRank3;
-	elseif IsSpellKnown(Dest_Ability.ConflagrateRank2) then _Conflagrate = Dest_Ability.ConflagrateRank2; end
---]]
 	if IsSpellKnown(Dest_Ability.HellfireRank5) then _Hellfire = Dest_Ability.HellfireRank5;	
 	elseif IsSpellKnown(Dest_Ability.HellfireRank4) then _Hellfire = Dest_Ability.HellfireRank4;
 	elseif IsSpellKnown(Dest_Ability.HellfireRank3) then _Hellfire = Dest_Ability.HellfireRank3;
@@ -281,7 +253,6 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	elseif IsSpellKnown(Dest_Ability.ShadowburnRank2) then _Shadowburn = Dest_Ability.ShadowburnRank2; end
 
 	if IsSpellKnown(Dest_Ability.ShadowFlameRank2) then _ShadowFlame = Dest_Ability.ShadowFlameRank2;	end
-	--elseif IsSpellKnown(Dest_Ability.ShadowFlameRank1) then _ShadowFlame = Dest_Ability.ShadowFlameRank1; end
 
 	if IsSpellKnown(Dest_Ability.SoulFireRank6) then _SoulFire = Dest_Ability.SoulFireRank6;	
 	elseif IsSpellKnown(Dest_Ability.SoulFireRank5) then _SoulFire = Dest_Ability.SoulFireRank5;	
@@ -292,24 +263,24 @@ local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, 
 	if IsSpellKnown(Dest_Ability.ShadowfuryRank3) then _Shadowfury = Dest_Ability.ShadowfuryRank3;
 	elseif IsSpellKnown(Dest_Ability.ShadowfuryRank2) then _Shadowfury = Dest_Ability.ShadowfuryRank2; end
 	
-	--OptionIDs defaults
 	ids.optionMaxIds = {
 		CurseofWeakness = _CurseofWeakness,
 		CurseofAgony = _CurseofAgony,
+		CurseRecklessness = _CurseofAgony,
 		CurseofTongues = _CurseofTongues,
 		CurseofExhaustion = _CurseofExhaustion,
 		CurseoftheElements = _CurseoftheElements,
-		--CurseofShadow = _CurseofShadow,
 		CurseofDoom = _CurseofDoom,
+		UnstableAffliction = _UnstableAffliction,
 		Immolate = _Immolate,
 		Corruption = _Corruption,
-		--SiphonLife = _SiphonLife,
 		ShadowBolt = _ShadowBolt,
 		RainofFire = _RainofFire,
 		Hellfire = _Hellfire,
 		SeedOfCorruption = _SeedOfCorruption,
 		SearingPain = _SearingPain,
 		Metamorphosis = _Metamorphosis,
+		DrainSoul = _DrainSoul,
 	}
 
 function ConROC:EnableRotationModule()
@@ -344,12 +315,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 		local cofdDEBUFF										= ConROC:TargetDebuff(_CurseofDoom);		
 	local cofeRDY											= ConROC:AbilityReady(Aff_Ability.CurseofExhaustion, timeShift);
 		local cofeDEBUFF										= ConROC:TargetDebuff(Aff_Ability.CurseofExhaustion);			
-	--[[ --removed from Wrath
-	local cofrRDY											= ConROC:AbilityReady(_CurseofRecklessness, timeShift);
-		local cofrDEBUFF										= ConROC:TargetDebuff(_CurseofRecklessness);		
-	--]]
-	--local cofsRDY											= ConROC:AbilityReady(_CurseofShadow, timeShift);
-	--	local cofsDEBUFF										= ConROC:TargetDebuff(_CurseofShadow);
 	local coftRDY											= ConROC:AbilityReady(_CurseofTongues, timeShift);
 		local coftDEBUFF										= ConROC:TargetDebuff(_CurseofTongues);		
 	local cofteRDY											= ConROC:AbilityReady(_CurseoftheElements, timeShift);
@@ -365,8 +330,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	local lTapRDY											= ConROC:AbilityReady(_LifeTap, timeShift);
 	local seedRDY											= ConROC:AbilityReady(_SeedOfCorruption, timeShift);
 		local seedDEBUFF										= ConROC:TargetDebuff(_SeedOfCorruption);
-	--local slifeRDY											= ConROC:AbilityReady(_SiphonLife, timeShift);
-	--	local slifeDEBUFF										= ConROC:TargetDebuff(_SiphonLife);
 	local unsAffRDY											= ConROC:AbilityReady(_UnstableAffliction, timeShift);
 		local unsAffDEBUFF										= ConROC:TargetDebuff(_UnstableAffliction);
 
@@ -375,8 +338,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	local cHealthstoneRDY									= ConROC:AbilityReady(_CreateHealthstone, timeShift);	
 	local cSoulstoneRDY										= ConROC:AbilityReady(_CreateSoulstone, timeShift);	
 	local cSpellstoneRDY									= ConROC:AbilityReady(_CreateSpellstone, timeShift);	
-	-- removed from game in patch 3.1.2
-	--local dSacRDY											= ConROC:AbilityReady(Demo_Ability.DemonicSacrifice, timeShift);
 	local detInvisRDY										= ConROC:AbilityReady(_DetectInvisibility, timeShift);
 	local subDemonRDY										= ConROC:AbilityReady(_SubjagateDemon, timeShift);	
 	local felDomRDY											= ConROC:AbilityReady(Demo_Ability.FelDomination, timeShift);
@@ -408,7 +369,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	
 --Conditions		
 	local summoned 											= ConROC:CallPet();
---	local HasVoid											= IsSpellKnown(ids.Aff_PetAbility.ThreateningPresence, true);
 	local assist 											= ConROC:PetAssist();
 	local moving 											= ConROC:PlayerSpeed();
 	local incombat 											= UnitAffectingCombat('player');
@@ -417,22 +377,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	local playerPh 											= ConROC:PercentHealth('player');	
 	local hasWand											= HasWandEquipped();
 	local tarHasMana 										= UnitPower('target', Enum.PowerType.Mana);
---[[
-    local dSacBUFF = {
-		fe														= ConROC:Buff(Player_Buff.FelEnergy);
-		bw														= ConROC:Buff(Player_Buff.BurningWish);
-		tofs													= ConROC:Buff(Player_Buff.TouchofShadow);	
-		fs														= ConROC:Buff(Player_Buff.FelStamina);
-    }	
-
-	local dSacUp = false;
-		for k, v in pairs(dSacBUFF) do
-			if v then
-				dSacUp = true;
-				break
-			end
-		end
---]]
 
 --Indicators
 	ConROC:AbilityBurst(_SoulFire, sfireRDY);
@@ -441,7 +385,6 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 --Warnings
 	if not assist and summoned and incombat then
 		ConROC:Warnings("Pet is NOT attacking!!!", true);		
-		--UIErrorsFrame:AddMessage("Pet is NOT attacking!!!", 1.0, 0.0, 0.0, 53, 5);
 	end
 
 --Rotations	
@@ -483,11 +426,7 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	if ConROC:CheckBox(ConROC_SM_Curse_Agony) and cofaRDY and not cofaDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
 		return _CurseofAgony;
 	end
---[[
-	if ConROC:CheckBox(ConROC_SM_Curse_Recklessness) and cofrRDY and not cofrDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
-		return _CurseofRecklessness;
-	end
---]]
+
 	if ConROC:CheckBox(ConROC_SM_Curse_Tongues) and coftRDY and not coftDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
 		return _CurseofTongues;
 	end
@@ -499,20 +438,15 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	if ConROC:CheckBox(ConROC_SM_Curse_Elements) and cofteRDY and not cofteDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
 		return _CurseoftheElements;
 	end
---[[
-	if ConROC:CheckBox(ConROC_SM_Curse_Shadow) and cofsRDY and not cofsDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
-		return _CurseofShadow;
-	end
---]]
+
 	if ConROC:CheckBox(ConROC_SM_Curse_Doom) and cofdRDY and not cofdDEBUFF and ((ConROC:Raidmob() and targetPh >= 75) or (not ConROC:Raidmob() and targetPh == 100)) then 
 		return Aff_Ability.CurseofDoom;
 	end	
-	--
+
 	-- Metamorphosis 
 	if ConROC:CheckBox(ConROC_SM_Option_Metamorphosis) and metaRDY and ConROC:TalentChosen(Spec.Demonology, Demo_Talent.Metamorphosis) and inMelee then
 		return Demo_Ability.Metamorphosis;
 	end
-	--
 
 	if sBoltRDY and sTranceBUFF then
 		return _ShadowBolt;
@@ -565,11 +499,7 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	if ConROC:TalentChosen(Spec.Affliction, Aff_Talent.Haunt) and hauntRDY and not hauntDEBUFF then
 		return _Haunt;
 	end 
-	--[[
-	if ConROC:CheckBox(ConROC_SM_Debuff_SiphonLife) and slifeRDY and not slifeDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
-		return _SiphonLife;
-	end		
-	--]]
+
 	if ConROC:CheckBox(ConROC_SM_Debuff_Immolate) and immoRDY and not immoDEBUFF and currentSpell ~= _Immolate and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
 		return _Immolate;
 	end
