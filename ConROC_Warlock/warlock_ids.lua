@@ -99,9 +99,9 @@ local optionMaxIds = ...;
 		LifeTapRank6 = 11689,
 		LifeTapRank7 = 27222,	
 		LifeTapRank8 = 57946,	
-		SeedOfCorruptionRank1 = 27243,	
-		SeedOfCorruptionRank2 = 47835,	
-		SeedOfCorruptionRank3 = 47836,
+		SeedofCorruptionRank1 = 27243,	
+		SeedofCorruptionRank2 = 47835,	
+		SeedofCorruptionRank3 = 47836,
 		UnstableAfflictionRank1 = 30108,
 		UnstableAfflictionRank2 = 30404,
 		UnstableAfflictionRank3 = 30405,
@@ -109,44 +109,46 @@ local optionMaxIds = ...;
 		UnstableAfflictionRank5 = 47843,
 	}
 	ids.Aff_Talent = {
-		ImprovedCurseofAgony = 1,
-		Suppression = 2,
+	--[[replaced by function in class file.
+		ImprovedCurseofAgony = 15,--1,
+		Suppression = 5,--2,
 		ImprovedCorruption = 3,
 		 
-		ImprovedCurseofWeakness = 4,
-		ImprovedDrainSoul = 5,
-		ImprovedLifeTap = 6,
-		SoulSiphon = 7,
+		ImprovedCurseofWeakness = 6,--4,
+		ImprovedDrainSoul = 14,--5,
+		ImprovedLifeTap = 7,--6,
+		SoulSiphon = 4,--7,
 		 
-		ImprovedFear = 8,
-		FelConcentration = 9,
-		AmplifyCurse = 10,
+		ImprovedFear = 27,--8,
+		FelConcentration = 1,--9,
+		AmplifyCurse = 12,--10,
 		 
-		GrimReach = 11,
-		Nightfall = 12,
-		EmpoweredCorruption = 13,
+		GrimReach = 8,--11,
+		Nightfall = 2,--12,
+		EmpoweredCorruption = 21,--13,
 		 
-		ShadowEmbrace = 14,
-		SiphonLife = 15,
-		CurseofExhaustion = 16,
+		ShadowEmbrace = 20,--14,
+		SiphonLife = 10, --15,
+		CurseofExhaustion = 13,--16,
 		
-		ImprovedFelhunter = 17,
-		ShadowMastery = 18,
+		ImprovedFelhunter = 22,--17,
+		ShadowMastery = 11,--18,
 		 
-		Eradication = 19,
-		Contagion = 20,
-		DarkPact = 21,
+		Eradication = 25,--19,
+		Contagion = 18,--20,
+		DarkPact = 9,--21,
 
-		ImprowedHowlofTerror = 22,
-		Malediction = 23,
+		ImprowedHowlofTerror = 17,--22,
+		Malediction = 16,--23,
 
-		DeathsEmbrace = 24,
-		UnstableAffliction = 25,
-		Pandemic = 26,
+		DeathsEmbrace = 23,--24,
+		UnstableAffliction = 19,--25,
+		Pandemic = 28,--26,
 
-		EverlastingAffliction = 27,
+		EverlastingAffliction = 24,--27,
 
-		Haunt = 28,
+		Haunt = 26,--28,
+		--]]
 	}		
 --Demonology
 	ids.Demo_Ability = {
@@ -242,22 +244,23 @@ local optionMaxIds = ...;
 		ShadowCleave = 50581,		-- Req Metamorphosis
 	}
 	ids.Demo_Talent = {
+	--[[ replaced by function in class file.
 		ImprovedHealthstone = 1,
 		ImprovedImp = 2,
 		DemonicEmbrace = 3,
 		FelSynergy = 4,
 		 
-		ImprovedHealthFunnel = 5,
-		DemonicBrutality = 6,
+		ImprovedHealthFunnel = 4,--5,
+		DemonicBrutality = 5,--6,
 		FelVitality = 7,
 		 
 		ImprovedSayaad = 8, --new name from ImprovedSuccubus
 		SoulLink = 9,
-		FelDomination = 10,
+		FelDomination = 6,--10,
 		DemonicAegis = 11,
 
 		UnholyPower = 12,
-		MasterSummoner = 13,
+		MasterSummoner = 7,--13,
 		 
 		ManaFeed = 14,
 		MasterConjuror = 15,
@@ -277,7 +280,7 @@ local optionMaxIds = ...;
 
 		DemonicPact = 25,
 
-		Metamorphosis = 26,
+		Metamorphosis = 26,--]]
 	}
 --Destruction
 	ids.Dest_Ability = {
@@ -301,6 +304,7 @@ local optionMaxIds = ...;
 		ImmolateRank8 = 25309,
 		ImmolateRank9 = 27215,	
 		ImmolateRank10 = 47810,	
+		ImmolateRank11 = 47811,	
 		IncinerateRank1 = 29722,	
 		IncinerateRank2 = 32231,	
 		IncinerateRank3 = 47837,	
@@ -354,8 +358,11 @@ local optionMaxIds = ...;
 		ShadowfuryRank1 = 30283,
 		ShadowfuryRank2 = 30413,
 		ShadowfuryRank3 = 30414,
+		ShadowfuryRank4 = 47846,
+		ShadowfuryRank5 = 47847,
 	}
 	ids.Dest_Talent = {
+	--[[replaced by function in class file.
 		ImprovedShadowBolt = 1,
 		Bane = 2,
 		 
@@ -391,7 +398,7 @@ local optionMaxIds = ...;
 
 		FireAndBrimstone = 26,
 
-		ChaosBolt = 27,
+		ChaosBolt = 27,--]]
 	}
 --Pet
 	ids.Pet = {
@@ -404,6 +411,12 @@ local optionMaxIds = ...;
 		FelStamina = 18790,
 		ShadowTrance = 17941,
 		TouchofShadow = 18791,
+		LifeTap = 63321,
+		SpiritsoftheDamned = 61082,
+		IllustrationoftheDragonSoul = 60486,
+		MoltenCore = 71165,
+		DecimationRank1 = 163165,
+		DecimationRank2 = 163167,
 	}
 	ids.Player_Debuff = {
 

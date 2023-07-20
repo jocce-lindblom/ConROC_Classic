@@ -6,12 +6,9 @@ local debugOptions = {
 
 local ConROC_Warlock, ids = ...;
 local optionMaxIds = ...;
-
+local ConROC_RolesTable = {};
 local wandFrame =0;
 local lastFrame = 0;
-local lastDemon = 0;
-local lastCurse = 0;
-local lastDebuff = 0;
 
 local showOptions = false;
 local fixOptionsWidth = false;
@@ -20,18 +17,13 @@ local spellFrameHeight = 0;
 local scrollContentWidth = frameWidth - 30;
 local scrollHeight = 0;
 
-local lastSpell = 0;
-local lastOption = 0;
-
 local plvl = UnitLevel('player');
-
 local defaults = {
 	["ConROC_SM_Role_Caster"] = true,
 
 	["ConROC_Caster_Demon_Imp"] = true,
-	["ConROC_Caster_Curse_Weakness"] = true,
-	["ConROC_Caster_Debuff_Immolate"] = true,
-	["ConROC_Caster_Debuff_Corruption"] = true,
+	["ConROC_Caster_Curse_Agony"] = true,
+	["ConROC_Caster_Debuff_Immolate"] = false,
 	["ConROC_Caster_Spell_ShadowBolt"] = true,
 	["ConROC_Caster_AoE_RainofFire"] = true,
 	["ConROC_Caster_Option_SoulShard"] = 5,
@@ -42,7 +34,93 @@ local defaults = {
 ConROCWarlockSpells = ConROCWarlockSpells or defaults;
 local radioGroups = {}
 
+function ConROC:setRole(radioBtn, roleData, radioButtons)
+	for _, btn in ipairs(radioButtons) do
+        btn:SetChecked(false)
+    	ConROCWarlockSpells[btn.role] = false
+    end
+    --print("setRole:", roleData.role)
+    radioBtn:SetChecked(true)
+    ConROCWarlockSpells[roleData.role] = true
+end
+function ConROC:checkActiveRole()
+	for _, roleSettings in ipairs(ConROC_RoleSettingsTable) do
+        local frameName = roleSettings.frameName
+        local role = _G[roleSettings.role]
+
+        if role:GetChecked() then
+        		local checkboxName = "ConROC_"..frameName.."_" --.._spellData.spellCheckbox
+                -- The frame with matching name is checked, perform actions here
+                --print(" is checked, ", role:GetName())
+                return role, checkboxName, frameName
+        end
+    end
+end
+
+function ConROC:setRoleChecked(_spellData, _oItem)
+	local activeRole, checkboxName, _ = ConROC:checkActiveRole()
+	if ConROC:CheckBox(activeRole) then
+		local spellCheck = checkboxName .. _spellData.spellCheckbox
+		if _spellData.type == "textfield" then
+			_oItem:SetNumber(ConROCWarlockSpells[spellCheck]);
+		else
+			_oItem:SetChecked(ConROCWarlockSpells[spellCheck]);
+		end
+	end
+end
+
+function ConROC:setRoleSpellClicked(_spellData, _oItem)
+	local activeRole, checkboxName, _ = ConROC:checkActiveRole()
+	if ConROC:CheckBox(activeRole) then
+		local spellCheck = checkboxName .. _spellData.spellCheckbox
+		if _spellData.type == "textfield" then
+			ConROCWarlockSpells[spellCheck] = _G["ConROC_SM_".._spellData.spellCheckbox]:GetNumber();
+		else
+			--_oItem:SetChecked(ConROCWarlockSpells[spellCheck]);
+			ConROCWarlockSpells[spellCheck] = _oItem:GetChecked();
+		end
+	end
+end
+
 function ConROC:SpellmenuClass()
+	ConROC_RoleSettingsTable = {
+		{
+		frameName = "Caster",
+		activeTexture = ConROC.Textures.Caster,
+		disabledTexture = ConROC.Textures.Caster_disabled,
+		role = "ConROC_SM_Role_Caster",
+		},--[[
+		{
+		frameName = "Melee",
+		activeTexture = ConROC.Textures.Melee,
+		disabledTexture = ConROC.Textures.Melee_disabled,
+		role = "ConROC_SM_Role_Melee",
+		},
+		{
+		frameName = "Healer",
+		activeTexture = ConROC.Textures.Healer,
+		disabledTexture = ConROC.Textures.Healer_disabled,
+		role = "ConROC_SM_Role_Healer",
+		},
+		{
+		frameName = "Tank",
+		activeTexture = ConROC.Textures.Tank,
+		disabledTexture = ConROC.Textures.Tank_disabled,
+		role = "ConROC_SM_Role_Tank",
+		},
+		{
+		frameName = "Ranged",
+		activeTexture = ConROC.Textures.Ranged,
+		disabledTexture = ConROC.Textures.Ranged_disabled,
+		role = "ConROC_SM_Role_Ranged",
+		},--]]
+		{
+		frameName = "PvP",
+		activeTexture = ConROC.Textures.PvP,
+		disabledTexture = ConROC.Textures.PvP_disabled,
+		role = "ConROC_SM_Role_PvP",
+		},
+	}
 	ConROC_RotationSettingsTable = {
 	  {
 	    frameName = "Demons",
@@ -74,6 +152,7 @@ function ConROC:SpellmenuClass()
 	    spells = {
 	    	{spellID = ids.optionMaxIds.Immolate, spellCheckbox = "Debuff_Immolate", reqLevel = 1, type="spell"},
 	    	{spellID = ids.optionMaxIds.Corruption, spellCheckbox = "Debuff_Corruption", reqLevel = 4, type="spell"},
+	    	{spellID = ids.optionMaxIds.SoulFire, spellCheckbox = "Debuff_SoulFire", reqLevel = 48, type="spell"},
 	    	{spellID = ids.optionMaxIds.UnstableAffliction, spellCheckbox = "Debuff_UnstableAffliction", reqLevel = 50, type="spell"}
 	    },
 	    groupType = "checkBoxes"
@@ -89,6 +168,7 @@ function ConROC:SpellmenuClass()
 	  {
 	    frameName = "AoEs",
 	    spells = {
+	    	{spellID = ids.optionMaxIds.SeedofCorruption, spellCheckbox = "AoE_SeedofCorruption", reqLevel = 70, type="spell"},
 	    	{spellID = ids.optionMaxIds.RainofFire, spellCheckbox = "AoE_RainofFire", reqLevel = 20, type="spell"},
 	    	{spellID = ids.optionMaxIds.Hellfire, spellCheckbox = "AoE_Hellfire", reqLevel = 30, type="spell"},
 	    },
@@ -99,6 +179,7 @@ function ConROC:SpellmenuClass()
 	    spells = {
 	    	{spellID = ids.optionMaxIds.Metamorphosis, spellCheckbox = "Option_Metamorphosis", reqLevel = 60, type="spell"},
 	    	{spellID = ids.optionMaxIds.DrainSoul, spellCheckbox = "Option_SoulShard", reqLevel = 10, type="textfield", icon=134075, customName="Minimum Soul Shards"},
+	    	{spellID = "AoE Toggle Button", spellCheckbox = "Option_AoE", reqLevel = 20, type="aoetoggler"},
 	    	{spellID = "Use Wand", spellCheckbox = "Option_UseWand", reqLevel = 5, type="wand"}
 	    }
 	  }
@@ -118,61 +199,7 @@ function ConROC:SpellmenuClass()
 	frame:EnableMouse(true)
 	frame:SetClampedToScreen(true)
 
---Caster
-	local radio1 = CreateFrame("CheckButton", "ConROC_SM_Role_Caster", frame, "UIRadioButtonTemplate");
-	local radio1text = frame:CreateFontString(nil, "ARTWORK", "GameFontRedSmall");
-	radio1:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -10);
-	radio1:SetChecked(ConROCWarlockSpells.ConROC_SM_Role_Caster);
-	radio1:SetScript("OnClick",
-		function()
-			ConROC_SM_Role_Caster:SetChecked(true);
-			ConROC_SM_Role_PvP:SetChecked(false);
-			ConROCWarlockSpells.ConROC_SM_Role_Caster = ConROC_SM_Role_Caster:GetChecked();
-			ConROCWarlockSpells.ConROC_SM_Role_PvP = ConROC_SM_Role_PvP:GetChecked();
-			ConROC:RoleProfile()
-		end
-	);
-	radio1text:SetText("Caster");
-	local r1t = radio1.texture;
-	if not r1t then
-		r1t = radio1:CreateTexture('Spellmenu_radio1_Texture', 'ARTWORK');
-		r1t:SetTexture('Interface\\AddOns\\ConROC\\images\\magiccircle');
-		r1t:SetBlendMode('BLEND');
-		local color = ConROC.db.profile.purgeOverlayColor;
-		r1t:SetVertexColor(color.r, color.g, color.b);
-		radio1.texture = r1t;
-	end
-	r1t:SetSize(32,32);
-	r1t:SetPoint("CENTER", radio1, "CENTER", 0, 0);
-	radio1text:SetPoint("BOTTOM", radio1, "TOP", 0, 5);
-
---PvP
-	local radio4 = CreateFrame("CheckButton", "ConROC_SM_Role_PvP", frame, "UIRadioButtonTemplate");
-	local radio4text = frame:CreateFontString(nil, "ARTWORK", "GameFontRedSmall");
-	radio4:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -15, -10);
-	radio4:SetChecked(ConROCWarlockSpells.ConROC_SM_Role_PvP);
-	radio4:SetScript("OnClick",
-	  function()
-			ConROC_SM_Role_Caster:SetChecked(false);
-			ConROC_SM_Role_PvP:SetChecked(true);
-			ConROCWarlockSpells.ConROC_SM_Role_Caster = ConROC_SM_Role_Caster:GetChecked();
-			ConROCWarlockSpells.ConROC_SM_Role_PvP = ConROC_SM_Role_PvP:GetChecked();
-			ConROC:RoleProfile()
-		end
-	);
-	radio4text:SetText("PvP");
-	local r4t = radio4.texture;
-
-	if not r4t then
-		r4t = radio4:CreateTexture('Spellmenu_radio4_Texture', 'ARTWORK');
-		r4t:SetTexture('Interface\\AddOns\\ConROC\\images\\lightning-interrupt');
-		r4t:SetBlendMode('BLEND');
-		radio4.texture = r4t;
-	end
-	r4t:SetSize(32,32);
-	r4t:SetPoint("CENTER", radio4, "CENTER", 0, 0);
-	radio4text:SetPoint("BOTTOM", radio4, "TOP", 0, 5);
-
+	ConROC_roles(frame)
 
 	frame:Hide();
 	lastFrame = frame;
@@ -218,13 +245,77 @@ function ConROC:SpellmenuClass()
 	ConROCScrollFrame:Show();
 	ConROCScrollChild:Show();
 
-	ConROC_OptionsWindow(ConROC_RotationSettingsTable)
+	ConROC_OptionsWindow(ConROC_RotationSettingsTable, ConROC_RoleSettingsTable)
 	showOptions = true;
 	--ConROC:SpellMenuUpdate();
 	fixOptionsWidth = true;	 	
 end
 
-function ConROC_OptionsWindow(_table)
+function ConROC_roles(frame)
+
+    local radioButtons = {}
+	local roleIconSize = 32;
+	local sizeCheck = (math.ceil(frame:GetWidth()-20)/#ConROC_RoleSettingsTable)
+    if(sizeCheck <= 34) then
+    	roleIconSize = 28;
+    elseif (sizeCheck <= 28) then
+    	roleIconSize = 24
+    end
+    
+    local roleSpaceValue = (math.ceil(frame:GetWidth())-20-roleIconSize) / (#ConROC_RoleSettingsTable-1)
+    for i, roleData in ipairs(ConROC_RoleSettingsTable) do
+        local radioBtn = CreateFrame("CheckButton", roleData.role, frame, "UIRadioButtonTemplate")
+        radioBtn:SetSize(roleIconSize, roleIconSize)
+
+        local radioNormalTexture = radioBtn:GetNormalTexture()
+        radioNormalTexture:SetTexture(nil)
+        radioNormalTexture:SetAlpha(0)
+
+        local radioHighlightTexture = radioBtn:GetHighlightTexture()
+        radioHighlightTexture:SetTexture(nil)
+        radioHighlightTexture:SetAlpha(0)
+
+        local radioCheckedTexture = radioBtn:GetCheckedTexture()
+        radioCheckedTexture:SetTexture(nil)
+        radioCheckedTexture:SetAlpha(0)
+
+        radioBtn:SetPoint("TOPLEFT", frame, "TOPLEFT", (10 + (i - 1) * roleSpaceValue), -2)
+        radioBtn:SetChecked(ConROCWarlockSpells[roleData.role])
+
+        local checkedTexture = radioBtn:CreateTexture(nil, "ARTWORK")
+        checkedTexture:SetTexture(roleData.activeTexture)
+        checkedTexture:SetBlendMode("BLEND")
+        checkedTexture:SetSize(roleIconSize, roleIconSize)
+        checkedTexture:SetPoint("CENTER", radioBtn, "CENTER", 0, 0)
+        radioBtn:SetCheckedTexture(checkedTexture)
+
+        local uncheckedTexture = radioBtn:CreateTexture(nil, "ARTWORK")
+        uncheckedTexture:SetTexture(roleData.disabledTexture)
+        uncheckedTexture:SetBlendMode("BLEND")
+        uncheckedTexture:SetSize(roleIconSize, roleIconSize)
+        uncheckedTexture:SetPoint("CENTER", radioBtn, "CENTER", 0, 0)
+        radioBtn:SetNormalTexture(uncheckedTexture)
+
+        radioBtn:SetScript("OnClick", function(self)
+            --[[for _, btn in ipairs(radioButtons) do
+                btn:SetChecked(false)
+            	ConROCWarlockSpells[btn.role] = false
+            end
+            radioBtn:SetChecked(true)
+            ConROCWarlockSpells[roleData.role] = true--]]
+            ConROC:setRole(self, roleData, radioButtons)
+            ConROC:RoleProfile()
+        end)
+
+        local radioText = radioBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        radioText:SetText(roleData.frameName)
+        radioText:SetPoint("BOTTOM", radioBtn, "TOP", 0, -5)
+        radioBtn.role = roleData.role
+        table.insert(radioButtons, radioBtn)
+    end
+end
+
+function ConROC_OptionsWindow(_table, _roles)
 	local _, Class, classId = UnitClass("player")
 	local Color = RAID_CLASS_COLORS[Class]
 	-- create the child frames and add text to them
@@ -256,42 +347,42 @@ function ConROC_OptionsWindow(_table)
 	    frame.text = text -- store the text object in the frame for later use
 	   	
 	   	spellFrameHeight = 0;
-	    local spellFrame = CreateFrame("Frame", "ConROC_CheckFrame"..i, frame, "BackdropTemplate");
-		spellFrame:SetSize(scrollContentWidth, 5)
-		spellFrame:SetPoint("TOPLEFT", "ConROC_CheckHeader"..i, "BOTTOMLEFT", 0, 0)
+	    local _spellFrame = CreateFrame("Frame", "ConROC_CheckFrame"..i, frame, "BackdropTemplate");
+		_spellFrame:SetSize(scrollContentWidth, 5)
+		_spellFrame:SetPoint("TOPLEFT", "ConROC_CheckHeader"..i, "BOTTOMLEFT", 0, 0)
 		if debugOptions.spells then
-			spellFrame:SetBackdrop({
+			_spellFrame:SetBackdrop({
 			  bgFile = "Interface\\Buttons\\WHITE8x8",
 			  nil,
 			  tile = true, tileSize = 16, edgeSize = 16,
 			  insets = { left = 0, right = 0, top = 0, bottom = 0 }
 			})
 		    local r, g, b = math.random(), math.random(), math.random()
-		    spellFrame:SetBackdropColor(r, g, b, 0.5)
+		    _spellFrame:SetBackdropColor(r, g, b, 0.5)
 		end
-		lastDebuff = spellFrame;
-		lastFrame = spellFrame;
+		lastFrame = _spellFrame;
 	    scrollHeight = scrollHeight + 5;
 
 	    local _spells = _table[i].spells
 	    for j = 1, #_spells do
-	    	local spellData = _spells[j]
-			if spellData.type == "spell" then
+	    	local _spellData = _spells[j]
+	    	if _spellData.type == "spell" then
 				if _table[i].groupType == "radioButtons" then
-					ConROC:OptionRadioButtonSpell(spellData, i, j, spellFrame, radioButtonsTable);
+					ConROC:OptionRadioButtonSpell(_spellData, i, j, _spellFrame, radioButtonsTable);
 				else
-					ConROC:OptionCheckboxSpell(spellData, i, j, spellFrame);					
+					ConROC:OptionCheckboxSpell(_spellData, i, j, _spellFrame);					
 				end
-			elseif spellData.type == "wand" then
-				ConROC:OptionWand(spellData, i, j, spellFrame);
-			elseif spellData.type == "textfield" then
-				ConROC:OptionTextfield(spellData, i, j, spellFrame);
-				
-			elseif spellData.type == "none" then
-				ConROC:OptionNone(spellData, i, j, spellFrame);
+			elseif _spellData.type == "wand" then
+				ConROC:OptionWand(_spellData, i, j, _spellFrame);
+			elseif _spellData.type == "textfield" then
+				ConROC:OptionTextfield(_spellData, i, j, _spellFrame);
+			elseif _spellData.type == "aoetoggler" then
+				ConROC:OptionAoE(_spellData, i, j, _spellFrame);
+			elseif _spellData.type == "none" then
+				ConROC:OptionNone(_spellData, i, j, _spellFrame);
 			end
 			--print("--lastFrame:GetHeight()", math.ceil(lastFrame:GetHeight()))
-			spellFrame:SetHeight(spellFrameHeight);
+			_spellFrame:SetHeight(spellFrameHeight);
 			frame:Show();
 	    end
 			--print("---scrollHeight", math.ceil(scrollHeight))
@@ -313,189 +404,188 @@ function ConROC:wandEquipmentChanged(slotID)
 	end
 	ConROC:SpellMenuUpdate();
 end
-function ConROC:OptionCheckboxSpell(spellData, i, j, spellFrame)
+
+function ConROC:OptionCheckboxSpell(_spellData, i, j, _spellFrame)
 	--spell start
-	--	print("Spells " .. j .. ": " .. spellData.spellID)
-		local spellName, _, spellTexture = GetSpellInfo(spellData.spellID)
-		--print("Spells chk box: " .. j .. ": " .. spellName .. " texture id: " .. spellTexture .. " ConROC_SM_"..spellData.spellCheckbox)
-		local check1 = CreateFrame("CheckButton", "ConROC_SM_"..spellData.spellCheckbox, spellFrame, "UICheckButtonTemplate");
-		local check1text = check1:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
-			if j == 1 then
-				check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
-			else
-				check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
-			end
-			check1:SetSize(20,20)
-			local _casterCheckbox = "ConROC_Caster_"..spellData.spellCheckbox
-			local _pvpCheckbox = "ConROC_PvP_"..spellData.spellCheckbox
-			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-				check1:SetChecked(ConROCWarlockSpells[_casterCheckbox]);
+	--	print("Spells " .. j .. ": " .. _spellData.spellID)
+	local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+	--print("Spells chk box: " .. j .. ": " .. spellName .. " texture id: " .. spellTexture .. " ConROC_SM_".._spellData.spellCheckbox)
+	local oItem = CreateFrame("CheckButton", "ConROC_SM_".._spellData.spellCheckbox, _spellFrame, "UICheckButtonTemplate");
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
+	if j == 1 then
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+	else
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+	end
+	lastFrame = oItem;
+	oItem:SetSize(20,20)
+	ConROC:setRoleChecked(_spellData, oItem)
+
+	--ConROC:setRoleChecked(_spellData, oItem)
+	--static start
+	--[[local _casterCheckbox = "ConROC_Caster_".._spellData.spellCheckbox
+	local _pvpCheckbox = "ConROC_PvP_".._spellData.spellCheckbox
+	if ConROC:CheckBox(ConROC_SM_Role_Caster) then
+		oItem:SetChecked(ConROCWarlockSpells[_casterCheckbox]);
+	elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
+		oItem:SetChecked(ConROCWarlockSpells[_pvpCheckbox]);
+	end--]]
+	oItem:SetScript("OnClick", 
+		function(self)
+			ConROC:setRoleSpellClicked(_spellData, self)
+			--[[if ConROC:CheckBox(ConROC_SM_Role_Caster) then
+				ConROCWarlockSpells[_casterCheckbox] = oItem:GetChecked();
 			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-				check1:SetChecked(ConROCWarlockSpells[_pvpCheckbox]);
-			end
-			check1:SetScript("OnClick", 
-				function()
-					if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-						ConROCWarlockSpells[_casterCheckbox] = check1:GetChecked();
-					elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-						ConROCWarlockSpells[_pvpCheckbox] = check1:GetChecked();
-					end
-				end);
-			check1text:SetText(spellName);
-		local c1t = check1.texture;
-			if not c1t then
-				c1t = check1:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
-				c1t:SetTexture(spellTexture);
-				c1t:SetBlendMode('BLEND');
-				check1.texture = c1t;
-			end
-			c1t:SetSize(20,20)
-			c1t:SetPoint("LEFT", check1, "RIGHT", 2, 0);
-			check1text:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
-			
-		lastDebuff = check1;
-		lastFrame = check1;
-		scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
-		spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
-		--print("addiing to spellframe ".. j ..":", math.ceil(check1:GetHeight()));
-		lastFrame:Show();
+				ConROCWarlockSpells[_pvpCheckbox] = oItem:GetChecked();
+			end--]]
+		end);
+	-- static
+	oItemtext:SetText(spellName);
+	local c1t = oItem.texture;
+	if not c1t then
+		c1t = oItem:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
+		c1t:SetTexture(spellTexture);
+		c1t:SetBlendMode('BLEND');
+		oItem.texture = c1t;
+	end
+	c1t:SetSize(20,20)
+	c1t:SetPoint("LEFT", oItem, "RIGHT", 2, 0);
+	oItemtext:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
+	
+	--lastFrame = oItem;
+	scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
+	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
+	--print("addiing to spellframe ".. j ..":", math.ceil(oItem:GetHeight()));
+	lastFrame:Show();
 	--spell end
 end
-function ConROC:OptionRadioButtonSpell(spellData, i, j, spellFrame, radioButtonsTable)
+function ConROC:OptionRadioButtonSpell(_spellData, i, j, _spellFrame, _radioButtonsTable)
 	--spell start
 	local spellName, _, spellTexture;
-	if type(spellData.spellID) == "number" then
-		spellName, _, spellTexture = GetSpellInfo(spellData.spellID)
+	if type(_spellData.spellID) == "number" then
+		spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
 	else
-		spellName, spellTexture = spellData.spellID, nil;
+		spellName, spellTexture = _spellData.spellID, nil;
 	end
-	--print("Spells Radio: " .. j .. ": " .. spellName .. " texture id: " .. spellTexture .. " ConROC_SM_"..spellData.spellCheckbox)
-	local check1 = CreateFrame("CheckButton", "ConROC_SM_"..spellData.spellCheckbox, spellFrame, "UIRadioButtonTemplate");
-	local check1text = check1:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
-		if j == 1 then
-			check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
-		else
-			check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
-		end
-		check1:SetSize(20,20)
-		local _casterCheckbox = "ConROC_Caster_"..spellData.spellCheckbox
-		local _pvpCheckbox = "ConROC_PvP_"..spellData.spellCheckbox
-		if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-			check1:SetChecked(ConROCWarlockSpells[_casterCheckbox]);
-		elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-			check1:SetChecked(ConROCWarlockSpells[_pvpCheckbox]);
-		end
-    	check1.casterCheckbox = _casterCheckbox;
-    	check1.pvpCheckbox = _pvpCheckbox;
-		radioButtonsTable[j] = check1;
-		
-		check1:SetScript("OnClick", 
-			function(self)
-				for _, radioButton in ipairs(radioButtonsTable) do
-					if radioButton ~= self then
-						radioButton:SetChecked(false)
-						if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-							ConROCWarlockSpells[radioButton.casterCheckbox] = radioButton:GetChecked()
-						elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-							ConROCWarlockSpells[radioButton.pvpCheckbox] = radioButton:GetChecked()
-						end
-					else
-						-- Perform any additional logic based on the selected button
-						self:SetChecked(true)
-						if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-							ConROCWarlockSpells[radioButton.casterCheckbox] = self:GetChecked()
-						elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-							ConROCWarlockSpells[radioButton.pvpCheckbox] = self:GetChecked()
-						end
-					end
+	--print("Spells Radio: " .. j .. ": " .. spellName .. " texture id: " .. spellTexture .. " ConROC_SM_".._spellData.spellCheckbox)
+	local myFrame = "ConROC_SM_".._spellData.spellCheckbox
+	local oItem = CreateFrame("CheckButton", myFrame, _spellFrame, "UIRadioButtonTemplate");
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
+	if j == 1 then
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+	else
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+	end
+	lastFrame = oItem;
+	oItem:SetSize(20,20)
+	
+	ConROC:setRoleChecked(_spellData, oItem)
+	oItem.spellCheckbox = _spellData.spellCheckbox
+	_radioButtonsTable[j] = oItem;
+	
+	oItem:SetScript("OnClick", 
+		function(self)
+			local role, checkboxName, frameName = ConROC:checkActiveRole()
+			for _, radioButton in ipairs(_radioButtonsTable) do
+				if radioButton ~= self then
+					radioButton:SetChecked(false)
+					ConROCWarlockSpells[checkboxName .. radioButton.spellCheckbox] = radioButton:GetChecked()
+					
+				else
+					-- Perform any additional logic based on the selected button
+					self:SetChecked(true)
+					ConROCWarlockSpells[checkboxName .. radioButton.spellCheckbox] = self:GetChecked()
+					
 				end
-			end);
-		check1text:SetText(spellName);
-		local c1t = check1.texture;
-		if not c1t then
-			c1t = check1:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
-			c1t:SetTexture(spellTexture);
-			c1t:SetBlendMode('BLEND');
-			check1.texture = c1t;
-		end
-		c1t:SetSize(20,20)
-		c1t:SetPoint("LEFT", check1, "RIGHT", 2, 0);
-		if type(spellData.spellID) == "number" then
-			check1text:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
-		else				
-			check1text:SetPoint('LEFT', check1, 'RIGHT', 26, 0);
-		end
-
-	lastDebuff = check1;
-	lastFrame = check1;
+			end
+		end);
+	oItemtext:SetText(spellName);
+	local c1t = oItem.texture;
+	if not c1t then
+		c1t = oItem:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
+		c1t:SetTexture(spellTexture);
+		c1t:SetBlendMode('BLEND');
+		oItem.texture = c1t;
+	end
+	c1t:SetSize(20,20)
+	c1t:SetPoint("LEFT", oItem, "RIGHT", 2, 0);
+	if type(_spellData.spellID) == "number" then
+		oItemtext:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
+	else				
+		oItemtext:SetPoint('LEFT', oItem, 'RIGHT', 26, 0);
+	end
+	_G[myFrame] = oItem
+	--lastFrame = oItem;
 	scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
 	lastFrame:Show();
 	--spell end
 end
-function ConROC:OptionWand(spellData, i, j, spellFrame)
-	local check1 = CreateFrame("CheckButton", "ConROC_SM_"..spellData.spellCheckbox, spellFrame, "UICheckButtonTemplate");
-	local check1text = check1:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
+function ConROC:OptionWand(_spellData, i, j, _spellFrame)
+	local myFrame = "ConROC_SM_".._spellData.spellCheckbox
+	local oItem = CreateFrame("CheckButton", myFrame, _spellFrame, "UICheckButtonTemplate");
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
 	if j == 1 then
-		check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 	else
-		check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 	end
-	check1:SetSize(20,20)
-	local _casterCheckbox = "ConROC_Caster_"..spellData.spellCheckbox
-	local _pvpCheckbox = "ConROC_PvP_"..spellData.spellCheckbox
-	if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-		check1:SetChecked(ConROCWarlockSpells[_casterCheckbox]);
-	elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-		check1:SetChecked(ConROCWarlockSpells[_pvpCheckbox]);
-	end
-	check1:SetScript("OnClick", 
-		function()
-			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-				ConROCWarlockSpells[_casterCheckbox] = check1:GetChecked();
-			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-				ConROCWarlockSpells[_pvpCheckbox] = check1:GetChecked();
-			end
+	lastFrame = oItem;
+	oItem:SetSize(20,20)
+	--local _casterCheckbox = "ConROC_Caster_".._spellData.spellCheckbox
+	--local _pvpCheckbox = "ConROC_PvP_".._spellData.spellCheckbox
+	
+	ConROC:setRoleChecked(_spellData, oItem)
+	oItem:SetScript("OnClick", 
+		function(self)
+			ConROC:setRoleSpellClicked(_spellData, self)
+			--if ConROC:CheckBox(ConROC_SM_Role_Caster) then
+			--	ConROCWarlockSpells[_casterCheckbox] = oItem:GetChecked();
+			--elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
+			--	ConROCWarlockSpells[_pvpCheckbox] = oItem:GetChecked();
+			--end
 		end);
-	check1text:SetText(spellData.spellID);
+	oItemtext:SetText(_spellData.spellID);
 	local texture = 0;
 	if GetInventoryItemTexture("player", 18) == nil then
 		texture = GetItemIcon(44214) -- Default Wand texture
 	else
 		texture = GetInventoryItemTexture("player", 18);
 	end
-	local c1t = check1.texture;
+	local c1t = oItem.texture;
 	if not c1t then
-		c1t = check1:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
+		c1t = oItem:CreateTexture('CheckFrame'..j..'_check'..j..'_Texture', 'ARTWORK');
 		c1t:SetTexture(texture);
 		c1t:SetBlendMode('BLEND');
-		check1.texture = c1t;
+		oItem.texture = c1t;
 	end
 	c1t:SetSize(20,20)
-	c1t:SetPoint("LEFT", check1, "RIGHT", 2, 0);
-	check1text:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
+	c1t:SetPoint("LEFT", oItem, "RIGHT", 2, 0);
+	oItemtext:SetPoint('LEFT', c1t, 'RIGHT', 4, 0);
 
-	wandFrame = check1;
+	_G[myFrame] = oItem
+
+	wandFrame = oItem;
 	ConROC:wandEquipmentChanged(18);
 
-	lastOption = check1;
-	lastFrame = check1;
+	--lastFrame = oItem;
 	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
 	scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 	lastFrame:Show();
 end
-function ConROC:OptionTextfield(spellData, i, j, spellFrame)
-	local edit1 = CreateFrame("Frame", "ConROC_SM_"..spellData.spellCheckbox.."Frame", spellFrame,"BackdropTemplate");
-	edit1:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 0, right = 0, top = 0, bottom = 0},});
-	edit1:SetBackdropColor(0, 0, 0);
+function ConROC:OptionTextfield(_spellData, i, j, _spellFrame)
+	local oItem = CreateFrame("Frame", "ConROC_SM_".._spellData.spellCheckbox.."Frame", _spellFrame,"BackdropTemplate");
+	oItem:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 0, right = 0, top = 0, bottom = 0},});
+	oItem:SetBackdropColor(0, 0, 0);
 	if j == 1 then
-		edit1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 	else
-		edit1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 	end
-	edit1:SetSize(20, 20);
+	lastFrame = oItem;
+	oItem:SetSize(20, 20);
 
-	local box1 = CreateFrame("EditBox", "ConROC_SM_"..spellData.spellCheckbox, edit1);
+	local box1 = CreateFrame("EditBox", "ConROC_SM_".._spellData.spellCheckbox, oItem);
 	box1:SetPoint("TOP", 0, 0);
 	box1:SetPoint("BOTTOM", 0, 0);
 	box1:SetMultiLine(false);
@@ -505,92 +595,130 @@ function ConROC:OptionTextfield(spellData, i, j, spellFrame)
 	box1:SetMaxLetters("2");
 	box1:SetWidth(20);
 	box1:SetTextInsets(3, 0, 0, 0);
+
+	ConROC:setRoleChecked(_spellData, box1)
+--[[
 	if ConROC:CheckBox(ConROC_SM_Role_Caster) then
 		box1:SetNumber(ConROCWarlockSpells.ConROC_Caster_Option_SoulShard);
 	elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
 		box1:SetNumber(ConROCWarlockSpells.ConROC_PvP_Option_SoulShard);
 	end
+--]]	
 	box1:SetScript("OnEditFocusLost",
 		function()
-			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-				ConROCWarlockSpells.ConROC_Caster_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
-			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-				ConROCWarlockSpells.ConROC_PvP_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
-			end
+			ConROC:setRoleSpellClicked(_spellData, box1)
 			box1:ClearFocus()
 		end);
 	box1:SetScript("OnEnterPressed",
 		function()
-			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-				ConROCWarlockSpells.ConROC_Caster_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
-			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-				ConROCWarlockSpells.ConROC_PvP_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
-			end
+			ConROC:setRoleSpellClicked(_spellData, box1)
 			box1:ClearFocus()
 		end);
 	box1:SetScript("OnEscapePressed",
 		function()
+			--[[
 			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
 				ConROCWarlockSpells.ConROC_Caster_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
 			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
 				ConROCWarlockSpells.ConROC_PvP_Option_SoulShard = ConROC_SM_Option_SoulShard:GetNumber();
 			end
+			--]]
+			ConROC:setRoleSpellClicked(_spellData, box1)
 			box1:ClearFocus()
 		end);
 
-	local e1t = edit1:CreateTexture('CheckFrame2_edit1_Texture', 'ARTWORK');
-	e1t:SetTexture(GetItemIcon(spellData.icon));
+	local e1t = oItem:CreateTexture('CheckFrame2_oItem_Texture', 'ARTWORK');
+	e1t:SetTexture(GetItemIcon(_spellData.icon));
 	e1t:SetBlendMode('BLEND');
 	e1t:SetSize(20,20);
-	e1t:SetPoint("LEFT", edit1, "LEFT", 20, 0);
+	e1t:SetPoint("LEFT", oItem, "LEFT", 20, 0);
 
-	local edit1text = edit1:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
-	if(spellData.customName) then
-		edit1text:SetText(spellData.customName);
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");
+	if(_spellData.customName) then
+		oItemtext:SetText(_spellData.customName);
 	else
-		edit1text:SetText(spellData.spellID);
+		oItemtext:SetText(_spellData.spellID);
 	end			
-	edit1text:SetPoint('LEFT', e1t, 'RIGHT', 5, 0);
+	oItemtext:SetPoint('LEFT', e1t, 'RIGHT', 5, 0);
 
-	lastOption = edit1;
-	lastFrame = edit1;
+	--lastFrame = oItem;
 	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
 	scrollHeight = scrollHeight + lastFrame:GetHeight();
 	lastFrame:Show();
 end
-function ConROC:OptionNone(spellData, i, j, spellFrame)
-	local check1 = CreateFrame("CheckButton", "ConROC_SM_"..spellData.spellCheckbox, spellFrame, "UICheckButtonTemplate");
-	local check1text = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
+function ConROC:OptionAoE(_spellData, i, j, _spellFrame)
+	local myFrame = "ConROC_SM_".._spellData.spellCheckbox
+	local oItem = CreateFrame("CheckButton", myFrame, _spellFrame, "UICheckButtonTemplate");
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
 	if j == 1 then
-		check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 	else
-		check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 	end
-	check1:SetSize(20,20)
-	local _casterCheckbox = "ConROC_Caster_"..spellData.spellCheckbox
-	local _pvpCheckbox = "ConROC_PvP_"..spellData.spellCheckbox
-	if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-		check1:SetChecked(ConROCWarlockSpells[_casterCheckbox]);
-	elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-		check1:SetChecked(ConROCWarlockSpells[_pvpCheckbox]);
+	lastFrame = oItem;
+	oItem:SetSize(20,20)
+	ConROC:setRoleChecked(_spellData, oItem)
+	if ConROC:CheckBox(ConROC_SM_Option_AoE) then
+		ConROCButtonFrame:Show();
+		if ConROC.db.profile.unlockWindow then
+			ConROCToggleMover:Show();					
+		else
+			ConROCToggleMover:Hide();					
+		end
+	else
+		ConROCButtonFrame:Hide();
+		ConROCToggleMover:Hide();
 	end
-	check1:SetScript("OnClick", 
-		function()
-			if ConROC:CheckBox(ConROC_SM_Role_Caster) then
-				ConROCWarlockSpells[_casterCheckbox] = check1:GetChecked();
-			elseif ConROC:CheckBox(ConROC_SM_Role_PvP) then
-				ConROCWarlockSpells[_pvpCheckbox] = check1:GetChecked();
+	
+	oItem:SetScript("OnClick", 
+		function(self)
+			ConROC:setRoleSpellClicked(_spellData, self)
+			if ConROC:CheckBox(ConROC_SM_Option_AoE) then
+				ConROCButtonFrame:Show();
+				if ConROC.db.profile.unlockWindow then
+					ConROCToggleMover:Show();					
+				else
+					ConROCToggleMover:Hide();					
+				end					
+			else
+				ConROCButtonFrame:Hide();
+				ConROCToggleMover:Hide();
 			end
 		end);
-	check1text:SetText(spellData.spellID);
-	check1text:SetPoint('LEFT', check1, 'RIGHT', 26, 0);
-		
-	lastDebuff = check1;
-	lastFrame = check1;
+	oItemtext:SetText(_spellData.spellID);
+	oItemtext:SetPoint('LEFT', oItem, 'RIGHT', 26, 0);
+	_G[myFrame] = oItem;
+	--lastFrame = oItem;
 	scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
 	lastFrame:Show();
 end
+
+function ConROC:OptionNone(_spellData, i, j, _spellFrame)
+	local myFrame = "ConROC_SM_".._spellData.spellCheckbox
+	local oItem = CreateFrame("CheckButton", myFrame, _spellFrame, "UICheckButtonTemplate");
+	local oItemtext = oItem:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall");		
+	if j == 1 then
+		oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+	else
+		oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+	end
+	lastFrame = oItem;
+	oItem:SetSize(20,20)
+	ConROC:setRoleChecked(_spellData, oItem)
+	oItem:SetScript("OnClick", 
+		function(self)			
+			ConROC:setRoleSpellClicked(_spellData, self)
+		end);
+	oItemtext:SetText(_spellData.spellID);
+	oItemtext:SetPoint('LEFT', oItem, 'RIGHT', 26, 0);
+	_G[myFrame] = oItem;
+	--lastFrame = oItem;
+	scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
+	spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
+	lastFrame:Show();
+end
+
 function ConROC:SpellMenuUpdate()
 	lastFrame = ConROCScrollChild;
 	scrollHeight = 0;
@@ -608,27 +736,27 @@ function ConROC:SpellMenuUpdate()
 
 		   	
 		   	local spellFrameHeight = 0;
-		    local spellFrame = _G["ConROC_CheckFrame"..i];
-			spellFrame:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
-			lastFrame = spellFrame;
+		    local _spellFrame = _G["ConROC_CheckFrame"..i];
+			_spellFrame:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0);
+			lastFrame = _spellFrame;
 
 		    local _spells = _table[i].spells
 	    	local firstItem = 1;
 		    for j = 1, #_spells do
-		    	local spellData = _spells[j]
-				if spellData.type == "spell" then
-					local spellName, _, spellTexture = GetSpellInfo(spellData.spellID)
-					local check1 = _G["ConROC_SM_"..spellData.spellCheckbox]
+		    	local _spellData = _spells[j]
+				if _spellData.type == "spell" then
+					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
 					if j == firstItem then
-						check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 					else
-						check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 					end
-					if type(spellData.spellID) == "number" then
-						if plvl >= spellData.reqLevel and IsSpellKnown(spellData.spellID) then
-							lastFrame = check1;
+					if type(_spellData.spellID) == "number" then
+						if plvl >= _spellData.reqLevel and IsSpellKnown(_spellData.spellID) then
+							lastFrame = oItem;
 							scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
-							spellFrameHeight = spellFrameHeight + math.ceil(check1:GetHeight());
+							spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 							lastFrame:Show();
 						else
 							if j == firstItem then
@@ -639,29 +767,30 @@ function ConROC:SpellMenuUpdate()
 								end
 							end
 							--print("Hiding", spellName)
-							check1:Hide()
+							oItem:Hide()
 						end
 					else
-						lastFrame = check1;
+						--lastFrame = oItem;
 						scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
-						spellFrameHeight = spellFrameHeight + math.ceil(check1:GetHeight());
+						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 					end
 				--spell end
-				elseif spellData.type == "wand" then
+				elseif _spellData.type == "wand" then
 					--Use Wand
-					local check1 = _G["ConROC_SM_"..spellData.spellCheckbox]
+					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
 					if j == firstItem then
-						check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 					else
-						check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 					end
-					if plvl >= spellData.reqLevel then -- and HasWandEquipped() then
-						lastOption = check1;
-						lastFrame = check1;
-						spellFrameHeight = spellFrameHeight + math.ceil(check1:GetHeight());
+					if plvl >= _spellData.reqLevel then -- and HasWandEquipped() then
+						lastFrame = oItem;
+						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 						scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 						lastFrame:Show();
-						if (not HasWandEquipped()) and ((ConROC:CheckBox(ConROC_SM_Role_PvP) and ConROCWarlockSpells.ConROC_PvP_Option_UseWand ) or (ConROC:CheckBox(ConROC_SM_Role_Caster) and ConROCWarlockSpells.ConROC_Caster_Option_UseWand) ) then 
+						local role, checkboxName, frameName = ConROC:checkActiveRole()
+	            		local spellName = "ConROC_" .. frameName .. "_" .. _spellData.spellCheckbox
+						if (not HasWandEquipped()) and (ConROC:CheckBox(role) and ConROCWarlockSpells[spellName]) then 
 							--ConROC:Warnings("You should equip a wand!", true); --Why only displaying once and not on repeating swapping out wand to none
 							flashMessage()
 							--ConROC:DisplayErrorMessage("You should equip a wand!", 3.0, 0.5, 0.5, 1.0)
@@ -669,49 +798,72 @@ function ConROC:SpellMenuUpdate()
 					else
 						if j == firstItem then
 							if j == #_spells then
-								print("all section spells hidden")
+								--print("all section spells hidden")
 							else
 								firstItem = j + 1;
 							end
 						end
-						check1:Hide();
+						oItem:Hide();
 					end
-				elseif spellData.type == "textfield" then
-					local edit1 = _G["ConROC_SM_"..spellData.spellCheckbox.."Frame"]
+				elseif _spellData.type == "aoetoggler" then
+					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
 					if j == firstItem then
-						edit1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 					else
-						edit1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 					end
-					if plvl >= spellData.reqLevel and IsSpellKnown(spellData.spellID) then													
-						lastFrame = edit1;
+					if plvl >= _spellData.reqLevel then
+						lastFrame = oItem;
+						scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
+						spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
+						lastFrame:Show();
+					else
+						if j == firstItem then
+							if j == #_spells then
+								--print("all section spells hidden")
+							else
+								firstItem = j + 1;
+							end
+						end
+						--print("Hiding", spellName)
+						oItem:Hide()
+					end
+				elseif _spellData.type == "textfield" then
+					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox.."Frame"]
+					if j == firstItem then
+						oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+					else
+						oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+					end
+					if plvl >= _spellData.reqLevel and IsSpellKnown(_spellData.spellID) then													
+						lastFrame = oItem;
 						scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 						spellFrameHeight = spellFrameHeight + math.ceil(lastFrame:GetHeight());
 						lastFrame:Show();
 					else
 						if j == firstItem then
 							if j == #_spells then
-								print("all section spells hidden")
+								--print("all section spells hidden")
 							else
 								firstItem = j + 1;
 							end
 						end
-						edit1:Hide()
+						oItem:Hide()
 					end
-				elseif spellData.type == "none" then
-					local spellName, _, spellTexture = GetSpellInfo(spellData.spellID)
-					local check1 = _G["ConROC_SM_"..spellData.spellCheckbox]
+				elseif _spellData.type == "none" then
+					local spellName, _, spellTexture = GetSpellInfo(_spellData.spellID)
+					local oItem = _G["ConROC_SM_".._spellData.spellCheckbox]
 					if j == firstItem then
-						check1:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "TOPLEFT", 0, 0);
 					else
-						check1:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
+						oItem:SetPoint("TOPLEFT", lastFrame, "BOTTOMLEFT", 0, 0);
 					end
-					lastOption = check1;
-					lastFrame = check1;
-					spellFrameHeight = spellFrameHeight + math.ceil(check1:GetHeight());
+					lastFrame = oItem;
+					spellFrameHeight = spellFrameHeight + math.ceil(oItem:GetHeight());
 					scrollHeight = scrollHeight + math.ceil(lastFrame:GetHeight());
 				end
-				spellFrame:SetHeight(spellFrameHeight);
+				_spellFrame:SetHeight(spellFrameHeight);
 				frame:Show();
 		    end
 		end
@@ -743,23 +895,52 @@ function flashMessage()
 end
 
 -- create a function to update the scrollbar visibility
-function ConROC_UpdateScrollbarVisibility()
-	--print("ConROC_UpdateScrollbarVisibility")
+
+function ConROC:updateScrollArea()
     local scrollChildHeight = math.ceil(ConROCScrollChild:GetHeight())
     local containerHeight = math.ceil(ConROCScrollFrame:GetHeight())
     if scrollChildHeight > containerHeight then
         ConROCScrollbar:Enable()
-        --ConROCScrollFrame:updateScrollChildRect(0, scrollHeight - containerHeight, 0, 0)
     else
         ConROCScrollbar:Disable()
     end
 end
 
-function ConROC:updateScrollArea()
-	ConROC_UpdateScrollbarVisibility();
-end
-
 function ConROC:RoleProfile()
+
+	local activeRole, _, frameName = ConROC:checkActiveRole()
+
+	if ConROC:CheckBox(activeRole) then
+	    for _, rotationSettings in ipairs(ConROC_RotationSettingsTable) do
+	        for _, spellData in ipairs(rotationSettings.spells) do
+	            local spellCheckbox = spellData.spellCheckbox
+	            local checkboxName = "ConROC_SM_" .. spellCheckbox
+	            local spellName = "ConROC_" .. frameName .. "_" .. spellCheckbox
+	            if ConROCWarlockSpells[spellName] ~= nil then --and 
+	            	if type(ConROCWarlockSpells[spellName]) == "boolean" then
+			            --print("-- ConROCWarlockSpells[spellName]", ConROCWarlockSpells[spellName])
+			            --print(_G["ConROC_SM_" .. spellCheckbox], _G["ConROC_SM_" .. spellCheckbox]:GetName())
+	                	_G["ConROC_SM_" .. spellCheckbox]:SetChecked(ConROCWarlockSpells[spellName])
+	                elseif type(ConROCWarlockSpells[spellName]) == "number" then
+	                	_G["ConROC_SM_" .. spellCheckbox]:SetNumber(ConROCWarlockSpells[spellName])
+                	end
+            	end
+	        end
+	    end
+
+	    if ConROC:CheckBox(ConROC_SM_Option_AoE) then
+	        ConROCButtonFrame:Show()
+	        if ConROC.db.profile.unlockWindow then
+	            ConROCToggleMover:Show()
+	        else
+	            ConROCToggleMover:Hide()
+	        end
+	    else
+	        ConROCButtonFrame:Hide()
+	        ConROCToggleMover:Hide()
+	    end
+	end
+--[[
 	if ConROC:CheckBox(ConROC_SM_Role_Caster) then
 		ConROC_SM_Demon_Imp:SetChecked(ConROCWarlockSpells.ConROC_Caster_Demon_Imp);
 		ConROC_SM_Demon_Voidwalker:SetChecked(ConROCWarlockSpells.ConROC_Caster_Demon_Voidwalker);
@@ -770,17 +951,17 @@ function ConROC:RoleProfile()
 
 		ConROC_SM_Curse_Weakness:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Weakness);
 		ConROC_SM_Curse_Agony:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Agony);
---		ConROC_SM_Curse_Recklessness:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Recklessness);
+	--	ConROC_SM_Curse_Recklessness:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Recklessness);
 		ConROC_SM_Curse_Tongues:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Tongues);
 		ConROC_SM_Curse_Exhaustion:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Exhaustion);
 		ConROC_SM_Curse_Elements:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Elements);
---		ConROC_SM_Curse_Shadow:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Shadow);
+	--	ConROC_SM_Curse_Shadow:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Shadow);
 		ConROC_SM_Curse_Doom:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_Doom);
 		ConROC_SM_Curse_None:SetChecked(ConROCWarlockSpells.ConROC_Caster_Curse_None);
 
 		ConROC_SM_Debuff_Immolate:SetChecked(ConROCWarlockSpells.ConROC_Caster_Debuff_Immolate);
 		ConROC_SM_Debuff_Corruption:SetChecked(ConROCWarlockSpells.ConROC_Caster_Debuff_Corruption);
---		ConROC_SM_Debuff_SiphonLife:SetChecked(ConROCWarlockSpells.ConROC_Caster_Debuff_SiphonLife);
+	--	ConROC_SM_Debuff_SiphonLife:SetChecked(ConROCWarlockSpells.ConROC_Caster_Debuff_SiphonLife);
 		ConROC_SM_Debuff_UnstableAffliction:SetChecked(ConROCWarlockSpells.ConROC_Caster_Debuff_UnstableAffliction);
 
 		ConROC_SM_Spell_ShadowBolt:SetChecked(ConROCWarlockSpells.ConROC_Caster_Spell_ShadowBolt);
@@ -792,7 +973,7 @@ function ConROC:RoleProfile()
 		ConROC_SM_Option_SoulShard:SetNumber(ConROCWarlockSpells.ConROC_Caster_Option_SoulShard);
 		ConROC_SM_Option_UseWand:SetChecked(ConROCWarlockSpells.ConROC_Caster_Option_UseWand);
 		ConROC_SM_Option_Metamorphosis:SetChecked(ConROCWarlockSpells.ConROC_Option_Metamorphosis);
---		ConROC_SM_Option_AoE:SetChecked(ConROCWarlockSpells.ConROC_Caster_Option_AoE);
+	--	ConROC_SM_Option_AoE:SetChecked(ConROCWarlockSpells.ConROC_Caster_Option_AoE);
 
 		if ConROC:CheckBox(ConROC_SM_Option_AoE) then
 			ConROCButtonFrame:Show();
@@ -816,17 +997,17 @@ function ConROC:RoleProfile()
 
 		ConROC_SM_Curse_Weakness:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Weakness);
 		ConROC_SM_Curse_Agony:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Agony);
---		ConROC_SM_Curse_Recklessness:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Recklessness);
+	--	ConROC_SM_Curse_Recklessness:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Recklessness);
 		ConROC_SM_Curse_Tongues:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Tongues);
 		ConROC_SM_Curse_Exhaustion:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Exhaustion);
 		ConROC_SM_Curse_Elements:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Elements);
---		ConROC_SM_Curse_Shadow:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Shadow);
+	--	ConROC_SM_Curse_Shadow:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Shadow);
 		ConROC_SM_Curse_Doom:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_Doom);
 		ConROC_SM_Curse_None:SetChecked(ConROCWarlockSpells.ConROC_PvP_Curse_None);
 
 		ConROC_SM_Debuff_Immolate:SetChecked(ConROCWarlockSpells.ConROC_PvP_Debuff_Immolate);
 		ConROC_SM_Debuff_Corruption:SetChecked(ConROCWarlockSpells.ConROC_PvP_Debuff_Corruption);
---		ConROC_SM_Debuff_SiphonLife:SetChecked(ConROCWarlockSpells.ConROC_PvP_Debuff_SiphonLife);
+	--	ConROC_SM_Debuff_SiphonLife:SetChecked(ConROCWarlockSpells.ConROC_PvP_Debuff_SiphonLife);
 		ConROC_SM_Debuff_UnstableAffliction:SetChecked(ConROCWarlockSpells.ConROC_PvP_Debuff_UnstableAffliction);
 
 		ConROC_SM_Spell_ShadowBolt:SetChecked(ConROCWarlockSpells.ConROC_PvP_Spell_ShadowBolt);
@@ -838,7 +1019,7 @@ function ConROC:RoleProfile()
 		ConROC_SM_Option_SoulShard:SetNumber(ConROCWarlockSpells.ConROC_PvP_Option_SoulShard);
 		ConROC_SM_Option_UseWand:SetChecked(ConROCWarlockSpells.ConROC_PvP_Option_UseWand);
 		ConROC_SM_Option_Metamorphosis:SetChecked(ConROCWarlockSpells.ConROC_PvP_Option_Metamorphosis);
---		ConROC_SM_Option_AoE:SetChecked(ConROCWarlockSpells.ConROC_PvP_Option_AoE);
+	--	ConROC_SM_Option_AoE:SetChecked(ConROCWarlockSpells.ConROC_PvP_Option_AoE);
 
 		if ConROC:CheckBox(ConROC_SM_Option_AoE) then
 			ConROCButtonFrame:Show();
@@ -851,5 +1032,5 @@ function ConROC:RoleProfile()
 			ConROCButtonFrame:Hide();
 			ConROCToggleMover:Hide();
 		end
-	end
+	end--]]
 end

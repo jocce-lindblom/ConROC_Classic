@@ -1,3 +1,7 @@
+Ver 2.0.2
+	-Re-worked the talent section, now populated by a function
+	-Changed the role section in the spellmenu to new icons
+
 Ver 2.0.1
 	-Re-worked the code for the spellmenu
 	-Updated the wand support
