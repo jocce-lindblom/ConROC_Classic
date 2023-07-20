@@ -72,72 +72,7 @@ end
 function ConROCTTOnLeave(self)
 	GameTooltip:Hide()
 end
---[[
-function TTOnEnter(self)
-	print(":GetName()", self:GetName());
-	--GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-	GameTooltip_SetDefaultAnchor( GameTooltip, UIParent )
-	GameTooltip:SetText("ConROC Target Toggle")  -- This sets the top line of text, in gold.
-	GameTooltip:AddLine('MACRO = "/ConROCToggle"', 1, 1, 1, true)
-	GameTooltip:AddLine(" ", 1, 1, 1, true)
-	GameTooltip:AddLine("Single", .2, 1, .2)
-		GameTooltip:AddLine("This is for single target fights.", 1, 1, 1, true)
-	GameTooltip:AddLine("AoE", 1, .2, .2)
-		GameTooltip:AddLine("Can be used for trash or Boss fights with frequent adds.", 1, 1, 1, true)
-	GameTooltip:AddLine(" ", 1, 1, 1, true)
-		GameTooltip:AddLine('"This can be toggled during combat as phases change."', 1, 1, 0, true)
-	GameTooltip:Show()
-end
 
-function TTOnLeave(self)
-	GameTooltip:Hide()
-end
---not in use atm
-function ETOnEnter(self)
-	--GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-	GameTooltip_SetDefaultAnchor( GameTooltip, UIParent )
-	GameTooltip:SetText("ConROC Rotation Toggle")  -- This sets the top line of text, in gold.
-	GameTooltip:AddLine('MACRO = "/ConROCBurstToggle"', 1, 1, 1, true)
-	GameTooltip:AddLine(" ", 1, 1, 1, true)
-	GameTooltip:AddLine("Burst Rotation", .2, 1, .2)
-		GameTooltip:AddLine("This is for Boss fights where you want to decide when to use your cooldowns.", 1, 1, 1, true)
-	GameTooltip:AddLine("Full Rotation", 1, .2, .2)
-		GameTooltip:AddLine("Can be used for placing long cooldowns into the recommended rotation.", 1, 1, 1, true)
-	GameTooltip:AddLine(" ", 1, 1, 1, true)
-		GameTooltip:AddLine('"This can be toggled during combat as phases change."', 1, 1, 0, true)
-	GameTooltip:Show()
-end
-
-function ETOnLeave(self)
-	GameTooltip:Hide()
-end
-
-function TWOnEnter(self)
-	--GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-	GameTooltip_SetDefaultAnchor( GameTooltip, UIParent )
-	GameTooltip:SetText("ConROC Window")  -- This sets the top line of text, in gold.
-	GameTooltip:AddLine("", .2, 1, .2)
-		GameTooltip:AddLine("This window displays the next suggested ability in your rotation.", 1, 1, 1, true)
-	GameTooltip:Show()
-end
-
-function TWOnLeave(self)
-	GameTooltip:Hide()
-end
-
-function TDWOnEnter(self)
-	--GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
-	GameTooltip_SetDefaultAnchor( GameTooltip, UIParent )
-	GameTooltip:SetText("ConROC Defense Window")  -- This sets the top line of text, in gold.
-	GameTooltip:AddLine("", .2, 1, .2)
-		GameTooltip:AddLine("This window displays the next suggested defense ability in your rotation.", 1, 1, 1, true)
-	GameTooltip:Show()
-end
-
-function TDWOnLeave(self)
-	GameTooltip:Hide()
-end
---]]
 function TIWOnEnter(self)
 	--GameTooltip:SetOwner(self, "ANCHOR_PRESERVE")
 	GameTooltip_SetDefaultAnchor( GameTooltip, UIParent )
@@ -886,7 +821,7 @@ function ConROC:SpellmenuFrame()
 			self:Hide();
 			frameTitle:Hide();
 			ConROCSpellmenuClass:Hide();
-				frame:SetSize((90) + 14, (15) + 14);
+			frame:SetSize((90) + 14, (15) + 14);
 			ConROCSpellmenuFrame_OpenButton:Show();
 			optionsOpened = false;
 		end)

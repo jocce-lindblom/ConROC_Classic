@@ -16,6 +16,18 @@ ConROC.Textures = {
 	['Starburst'] = 'Interface\\Cooldown\\starburst',
 	['Shield'] = 'Interface\\AddOns\\ConROC\\images\\shield2',
 	['Skull'] = 'Interface\\AddOns\\ConROC\\images\\skull',
+	['Caster'] = 'Interface\\AddOns\\ConROC\\images\\role-caster',
+	['Caster_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-caster_disabled',
+	['PvP'] = 'Interface\\AddOns\\ConROC\\images\\role-pvp',
+	['PvP_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-pvp_disabled',
+	['Melee'] = 'Interface\\AddOns\\ConROC\\images\\role-melee',
+	['Melee_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-melee_disabled',
+	['Tank'] = 'Interface\\AddOns\\ConROC\\images\\role-tank',
+	['Tank_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-tank_disabled',
+	['Healer'] = 'Interface\\AddOns\\ConROC\\images\\role-healer',
+	['Healer_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-healer_disabled',
+	['Ranged'] = 'Interface\\AddOns\\ConROC\\images\\role-range',
+	['Ranged_disabled'] = 'Interface\\AddOns\\ConROC\\images\\role-range_disabled',
 };
 ConROC.FinalTexture = nil;
 

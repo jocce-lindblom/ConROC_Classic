@@ -7,11 +7,33 @@ ConROC.WarningFlags = {};
 local INF = 2147483647;
 
 function ConROC:TalentChosen(spec, talent)
-	local _, _, _, _, currentRank, maxRank = GetTalentInfo(spec, talent);
+	local name, _, tier, _, currentRank, maxRank = GetTalentInfo(spec, talent);
 	if currentRank >= 1 then
-		return true, currentRank, maxRank;
+		return true, currentRank, maxRank, name, tier;
 	end
 	return false, 0, 0;
+end
+
+function ConROC:currentSpec()
+    local numTabs  = GetNumTalentTabs()
+    local currentSpecName
+    local maxPoints = 0
+    for tab = 1, numTabs do
+        local numTalents = GetNumTalents(tab)
+        local pointsSpent = 0
+
+        for talent = 1, numTalents do
+            local _, _, _, _, spent = GetTalentInfo(tab, talent)
+            pointsSpent = pointsSpent + spent
+        end
+
+        if pointsSpent > maxPoints then
+            maxPoints = pointsSpent
+            currentSpecName = GetTalentTabInfo(tab)
+        end
+    end
+
+    return currentSpecName
 end
 
 function ConROC:SpecTally()
@@ -125,9 +147,10 @@ end
 
 function ConROC:TargetDebuff(spellID)
 	for i=1,16 do 
-		local _, _, count, _, _, _, _, _, _, spell = UnitAura("target", i, 'PLAYER|HARMFUL');
-			if spell == spellID then 
-				return true, count;
+		local _, _, count, _, _, expirationTime, _, _, _, spell = UnitAura("target", i, 'PLAYER|HARMFUL');
+			if spell == spellID then
+				local remainingTime = math.floor((expirationTime - GetTime())*10) / 10
+				return true, count, remainingTime;
 			end 
 		 
 	end
@@ -686,6 +709,16 @@ function ConROC:Equipped(itemType, slotName)
 	return false;
 end
 
+function IsGlyphActive(glyphSpellID)
+    for i = 1, 6 do
+        local enabled, _, _, spellID = GetGlyphSocketInfo(i)
+        if enabled and spellID == glyphSpellID then
+            return true
+        end
+    end
+    return false
+end
+
 function ConROC:CheckBox(checkBox)
 	local boxChecked = false;
 		if checkBox ~= nil then
@@ -721,14 +754,16 @@ function ConROC:Warnings(_Message, _Condition)
 	if _Condition then
 		self.WarningFlags[_Message] = self.WarningFlags[_Message] + 1;
 		if self.WarningFlags[_Message] == 1 then
-		print("_Message", _Message);
-			--UIErrorsFrame:TryFlashingExistingMessage(GetChatTypeIndex("SYSTEM"),_Message);
+		--print("_Message", _Message);
 			UIErrorsFrame:AddExternalErrorMessage(_Message);
-			--UIErrorsFrame:AddMessage(_Message, 1,0,0,1,53);
 		elseif self.WarningFlags[_Message] == 15 then
 			self.WarningFlags[_Message] = 0;
 		end
 	else
 		self.WarningFlags[_Message] = 0;
 	end
+end
+
+function ConROC:DisplayErrorMessage(message, displayTime, fadeInTime, fadeOutTime, holdTime)
+  UIErrorsFrame:AddExternalErrorMessage(message, displayTime, fadeInTime, fadeOutTime, holdTime)
 end
