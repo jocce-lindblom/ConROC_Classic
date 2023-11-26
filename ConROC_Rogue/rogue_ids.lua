@@ -61,6 +61,12 @@ local ConROC_Rogue, ids = ...;
 		GarroteRank10 = 48676,
 		KidneyShotRank1 = 408,
 		KidneyShotRank2 = 8643,
+		MutilateRank1 = 1329,
+		MutilateRank2 = 34411,
+		MutilateRank3 = 34412,
+		MutilateRank4 = 34413,
+		MutilateRank5 = 48663,
+		MutilateRank6 = 48666,
 		RuptureRank1 = 1943,
 		RuptureRank2 = 8639,
 		RuptureRank3 = 8640,
@@ -72,45 +78,6 @@ local ConROC_Rogue, ids = ...;
 		RuptureRank9 = 48672,
 		SliceandDiceRank1 = 5171,
 		SliceandDiceRank2 = 6774,
-	}
-	ids.Ass_Talent = {
-		ImprovedEviscerate = 1,
-		RemorselessAttacks = 2,
-		Malice = 3,
-		 
-		Ruthlessness = 4,
-		BloodSpatter = 5,
-		PuncturingWounds = 6,
-
-		Vigor = 7,
-		ImprovedExposeArmor = 8,
-		Lethality = 9,
-
-		VilePoisons = 10,
-		ImprovedPoisons = 11,
-
-		FleetFooted = 12,
-		ColdBlood = 13,
-		ImprovedKidneyShot = 14,
-		QuickRecovery = 15,
-
-		SealFate = 16,
-		Murder = 17,
-
-		DeadlyBrew = 18,
-		Overkill = 19,
-		DeadenedNerves = 20,
-
-		FocusedAttacs = 21,
-		FindWeakness = 22,
-
-		MasterPoisoner = 23,
-		Mutilate = 24,
-		TurntheTables = 25,
-
-		CuttoChase = 26,
-
-		HungerforBlood = 27,
 	}
 --Combat
 	ids.Com_Ability = {
@@ -164,47 +131,9 @@ local ConROC_Rogue, ids = ...;
 		SprintRank1 = 2983,
 		SprintRank2 = 8696,
 		SprintRank3 = 11305,
+		TricksoftheTradeRank1 = 57934,
 	}
-	ids.Com_Talent = {
-		ImprovedGouge = 1,
-		ImprovedSinisterStrike = 2,
-		DualWieldSpecialization = 3,
-
-		ImprovedSliceAndDice = 4,
-		Deflection = 5,
-		Precision = 6,
-
-		Endurance = 7,
-		Riposte = 8,
-		CloseQuartersCombat = 9,
-
-		ImprovedKick = 10,
-		ImprovedSprint = 11,
-		LightningReflexes = 12,
-		Aggression = 13,
-
-		MaceSpecialization = 14,
-		BladeFlurry = 15,
-		HackandSlash = 16,
-
-		WeaponExpertise = 17,
-		BladeTwisting = 18,
-
-		Vitality = 19,
-		AdrenalineRush = 20,
-		NervesofSteel = 21,
-
-		ThrowingSpecialization = 22,
-		CombatPotency = 23,
-
-		UnfairAdvantage = 24,
-		SurpriseAttacks = 25,
-		SavageCombat = 26,
-
-		PreyontheWeak = 27,
-
-		KillingSpree = 28,
-	}
+	
 --Subtlety
 	ids.Sub_Ability = {
 		Blind = 2094,
@@ -225,92 +154,56 @@ local ConROC_Rogue, ids = ...;
 		SapRank2 = 2070,
 		SapRank3 = 11297,
 		SapRank4 = 51724, -- new from here
+		ShadowDance = 51713,
 		StealthRank1 = 1784,
 		--StealthRank2 = 1785,
 		--StealthRank3 = 1786,
 		--StealthRank4 = 1787,
+		TricksoftheTradeRank1 = 57934,
 		VanishRank1 = 1856,
 		VanishRank2 = 1857,
 		VanishRank3 = 26889, -- new from here
 	}
-	ids.Sub_Talent = {
-		RelentlessStrikes = 1,
-		MasterofDeception = 2,
-		Opportunity = 3,
-
-		SleightofHand = 4,
-		DirtyTricks = 5,
-		Camouflage = 6,
-
-		Elusiveness = 7,
-		GhostlyStrike = 8,
-		SerratedBlades = 9,
-
-		Setup = 10,
-		Initiative = 11,
-		ImprovedAmbush = 12,
-
-		HeightenedSenses = 13,
-		Preparation = 14,
-		DirtyDeeds = 15,
-		Hemorrhage = 16,
-
-		MasterofSubtlety = 17,
-		Deadliness = 18,
-
-		EnvelopingShadows = 19,
-		Premeditation = 20,
-		CheatDeath = 21,
-
-		SinisterCalling = 22,
-		Waylay = 23,
-		
-		HonorAmongThieves = 24,
-		Shadowstep = 25,
-		FilthyTricks = 26,
-
-		SlaughterfromtheShadows = 27,
-
-		ShadowDance = 28,
-	}
+	
 --Poisons
 	ids.Poisons = { -- is items not spells
-		BlindingPowder = 5530,
-		AnestheticPoisonRank1 = 21835,
-		AnestheticPoisonRank2 = 43237,	
-		CripplingPoisonRank1 = 3775,
-		CripplingPoisonRank2 = 3776,	
-		DeadlyPoisonRank1 = 2892,
-		DeadlyPoisonRank2 = 2893,
-		DeadlyPoisonRank3 = 8984,
-		DeadlyPoisonRank4 = 8985,
-		DeadlyPoisonRank5 = 20844,
-		DeadlyPoisonRank6 = 22053,
-		DeadlyPoisonRank7 = 22054,
-		DeadlyPoisonRank8 = 43232,
-		DeadlyPoisonRank9 = 43233,
-		InstantPoisonRank1 = 6947,
-		InstantPoisonRank2 = 6949,
-		InstantPoisonRank3 = 6950,
-		InstantPoisonRank4 = 8926,
-		InstantPoisonRank5 = 8927,
-		InstantPoisonRank6 = 8928,
-		InstantPoisonRank7 = 21927,
-		InstantPoisonRank8 = 43230,
-		InstantPoisonRank9 = 43231,
-		MindnumbingPoisonRank1 = 5237,
-		MindnumbingPoisonRank2 = 6951,
-		MindnumbingPoisonRank3 = 9186,		
-		WoundPoisonRank1 = 10918,
-		WoundPoisonRank2 = 10920,
-		WoundPoisonRank3 = 10921,
-		WoundPoisonRank4 = 10922,
-		WoundPoisonRank5 = 22055,
-		WoundPoisonRank6 = 43234,
-		WoundPoisonRank7 = 43235,
+		AnestheticPoisonRank1 = {id = 21835, name = "Anesthetic Poison", enchantID = 2640, type = "poison"},
+		AnestheticPoisonRank2 = {id = 43237, name = "Anesthetic Poison II", enchantID = 3774, type = "poison"},	
+		CripplingPoisonRank1 = {id = 3775, name = "Crippling Poison", enchantID = 22, type = "poison"},
+		CripplingPoisonRank2 = {id = 3776, name = "Crippling Poison II", enchantID = 603, type = "poison"},	
+		DeadlyPoisonRank1 = {id = 2892, name = "Deadly Poison", enchantID = 7, type = "poison"},
+		DeadlyPoisonRank2 = {id = 2893, name = "Deadly Poison II", enchantID = 8, type = "poison"},
+		DeadlyPoisonRank3 = {id = 8984, name = "Deadly Poison III", enchantID = 626, type = "poison"},
+		DeadlyPoisonRank4 = {id = 8985, name = "Deadly Poison IV", enchantID = 627, type = "poison"},
+		DeadlyPoisonRank5 = {id = 20844, name = "Deadly Poison V", enchantID = 2630, type = "poison"},
+		DeadlyPoisonRank6 = {id = 22053, name = "Deadly Poison VI", enchantID = 2642, type = "poison"},
+		DeadlyPoisonRank7 = {id = 22054, name = "Deadly Poison VII", enchantID = 2643, type = "poison"},
+		DeadlyPoisonRank8 = {id = 43232, name = "Deadly Poison VIII", enchantID = 3770, type = "poison"},
+		DeadlyPoisonRank9 = {id = 43233, name = "Deadly Poison IX", enchantID = 3771, type = "poison"},
+		InstantPoisonRank1 = {id = 6947, name = "Instant Poison", enchantID = 323, type = "poison"},
+		InstantPoisonRank2 = {id = 6949, name = "Instant Poison II", enchantID = 324, type = "poison"},
+		InstantPoisonRank3 = {id = 6950, name = "Instant Poison III", enchantID = 325, type = "poison"},
+		InstantPoisonRank4 = {id = 8926, name = "Instant Poison IV", enchantID = 623, type = "poison"},
+		InstantPoisonRank5 = {id = 8927, name = "Instant Poison V", enchantID = 624, type = "poison"},
+		InstantPoisonRank6 = {id = 8928, name = "Instant Poison VI", enchantID = 625, type = "poison"},
+		InstantPoisonRank7 = {id = 21927, name = "Instant Poison VII", enchantID = 2641, type = "poison"},
+		InstantPoisonRank8 = {id = 43230, name = "Instant Poison VIII", enchantID = 3768, type = "poison"},
+		InstantPoisonRank9 = {id = 43231, name = "Instant Poison IX", enchantID = 3769, type = "poison"},
+		MindnumbingPoisonRank1 = {id = 5237, name = "Mind-numbing", enchantID = 35, type = "poison"},
+	--	MindnumbingPoisonRank2 = {id = 6951, name = "Mind-numbing II", enchantID = 23, type = "poison"},
+	--	MindnumbingPoisonRank3 = {id = 9186, name = "Mind-numbing III", enchantID = 643, type = "poison"},		
+		WoundPoisonRank1 = {id = 10918, name = "Wound Poison", enchantID = 703, type = "poison"},
+		WoundPoisonRank2 = {id = 10920, name = "Wound Poison II", enchantID = 704, type = "poison"},
+		WoundPoisonRank3 = {id = 10921, name = "Wound Poison III", enchantID = 705, type = "poison"},
+		WoundPoisonRank4 = {id = 10922, name = "Wound Poison IV", enchantID = 706, type = "poison"},
+		WoundPoisonRank5 = {id = 22055, name = "Wound Poison V", enchantID = 2644, type = "poison"},
+		WoundPoisonRank6 = {id = 43234, name = "Wound Poison VI", enchantID = 3772, type = "poison"},
+		WoundPoisonRank7 = {id = 43235, name = "Wound Poison VII", enchantID = 3773, type = "poison"},
+		BlindingPowder = {id = 5530, name = "Blinding Powder", enchantID = nil, type = "powder"},
 	}
+	
 	ids.ActivePoison = { -- list of EnchantId and Poison name to map against Poisons
-		[218]	=	"Anesthetic Poison",
+		[2640]	=	"Anesthetic Poison",
 		[3774]	=	"Anesthetic Poison II",	
 		[22]	=	"Crippling Poison",
 		[603]	=	"Crippling Poison II",
@@ -332,7 +225,7 @@ local ConROC_Rogue, ids = ...;
 		[2641]	=	"Instant Poison VII",
 		[3768]	=	"Instant Poison VIII",
 		[3769]	=	"Instant Poison IX",
-		[35]	=	"Mind Numbing Poison",
+		[35]	=	"Mind-numbing Poison",
 		[23]	=	"Mind-numbing Poison II",
 		[643]	=	"Mind-Numbing Poison III",	
 		[703]	=	"Wound Poison",

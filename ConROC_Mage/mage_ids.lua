@@ -21,6 +21,10 @@ local ConROC_Mage, optionMaxIds = ...;
 		AmplifyMagicRank4 = 10170,
 		AmplifyMagicRank5 = 27130,
 		AmplifyMagicRank6 = 33946,
+		ArcaneBlastRank1 = 30451,
+		ArcaneBlastRank2 = 42894,
+		ArcaneBlastRank3 = 42896,
+		ArcaneBlastRank4 = 42897,
 		ArcaneBrillianceRank1 = 23028,
 		ArcaneBrillianceRank2 = 27127,
 		ArcaneExplosionRank1 = 1449,
@@ -93,6 +97,7 @@ local ConROC_Mage, optionMaxIds = ...;
 		ManaShieldRank5 = 10192,
 		ManaShieldRank6 = 10193,
 		ManaShieldRank7 = 27131,
+		MirrorImage = 55342,
 		RemoveLesserCurse = 475,
 		SlowFall = 130,
 		PolymorphRank1 = 118,
@@ -101,39 +106,6 @@ local ConROC_Mage, optionMaxIds = ...;
 		PolymorphRank4 = 12826,
 		PresenceofMind = 12043,
 	}
-	ids.Arc_Talent = {
-		ArcaneSubtlety = 1,
-		ArcaneFocus = 2,
-		ImprovedArcaneMissiles = 3,
-		 
-		WandSpecialization = 4,
-		MagicAbsorption = 5,
-		ArcaneConcentration = 6,
-		 
-		MagicAttunement = 7,
-		ArcaneImpact = 8,
-		ArcaneFortitude = 9,
-		 
-		ImprovedManaShield = 10,
-		ImprovedCounterspell = 11,
-		ArcaneMeditation = 12,
-		 
-		ImprovedBlink = 13,
-		PresenceofMind = 14,
-		ArcaneMind = 15,
-		
-		PrismaticCloak = 16,  
-		ArcaneInstability = 17,
-		ArcanePotency = 18,
-
-		EmpoweredArcaneMissiles = 19,
-		ArcanePower = 20,
-		SpellPower = 21,
-
-		MindMastery = 22,
-		
-		Slow = 23,
-	}	
 --Fire
 	ids.Fire_Ability = {
 		BlastWaveRank1 = 11113,
@@ -144,6 +116,12 @@ local ConROC_Mage, optionMaxIds = ...;
 		BlastWaveRank6 = 27133,
 		BlastWaveRank7 = 33933,
 		Combustion = 11129,
+		DragonsBreathRank1 = 31661,
+		DragonsBreathRank2 = 33041,
+		DragonsBreathRank3 = 33042,
+		DragonsBreathRank4 = 33043,
+		DragonsBreathRank5 = 42949,
+		DragonsBreathRank6 = 42950,
 		FireBlastRank1 = 2136,
 		FireBlastRank2 = 2137,
 		FireBlastRank3 = 2138,
@@ -153,12 +131,15 @@ local ConROC_Mage, optionMaxIds = ...;
 		FireBlastRank7 = 10199,
 		FireBlastRank8 = 27087,
 		FireBlastRank9 = 27079,
+		FireBlastRank10 = 42872,
+		FireBlastRank11 = 42873,
 		FireWardRank1 = 543,
 		FireWardRank2 = 8457,
 		FireWardRank3 = 8458,
 		FireWardRank4 = 10223,
 		FireWardRank5 = 10225,
 		FireWardRank6 = 27128,
+		FireWardRank7 = 43010,
 		FireballRank1 = 133,
 		FireballRank2 = 143,
 		FireballRank3 = 145,
@@ -173,6 +154,8 @@ local ConROC_Mage, optionMaxIds = ...;
 		FireballRank12 = 25306,
 		FireballRank13 = 27070,
 		FireballRank14 = 38692,
+		FireballRank15 = 42832,
+		FireballRank16 = 42833,
 		FlamestrikeRank1 = 2120,
 		FlamestrikeRank2 = 2121,
 		FlamestrikeRank3 = 8422,
@@ -180,7 +163,16 @@ local ConROC_Mage, optionMaxIds = ...;
 		FlamestrikeRank5 = 10215,
 		FlamestrikeRank6 = 10216,
 		FlamestrikeRank7 = 27086,
+		FlamestrikeRank8 = 42925,
+		FlamestrikeRank9 = 42926,
+		FrostFireBoltRank1 = 44614,
+		FrostFireBoltRank2 = 47610,
+		LivingBombRank1 = 44461,
+		LivingBombRank2 = 55361,
+		LivingBombRank3 = 55362,
 		MoltenArmorRank1 = 30482,
+		MoltenArmorRank2 = 43045,
+		MoltenArmorRank3 = 43046,
 		PyroblastRank1 = 11366,
 		PyroblastRank2 = 12505,
 		PyroblastRank3 = 12522,
@@ -191,6 +183,8 @@ local ConROC_Mage, optionMaxIds = ...;
 		PyroblastRank8 = 18809,
 		PyroblastRank9 = 27132,
 		PyroblastRank10 = 33938,
+		PyroblastRank11 = 42890,
+		PyroblastRank12 = 42891,
 		ScorchRank1 = 2948,
 		ScorchRank2 = 8444,
 		ScorchRank3 = 8445,
@@ -200,38 +194,8 @@ local ConROC_Mage, optionMaxIds = ...;
 		ScorchRank7 = 10207,
 		ScorchRank8 = 27073,
 		ScorchRank9 = 27074,
-	}
-	ids.Fire_Talent = {
-		ImprovedFireball = 1,
-		Impact = 2,
-		 
-		Ignite = 3,
-		FlameThrowing = 4,
-		ImprovedFireBlast = 5,
-		 
-		Incineration = 6,
-		ImprovedFlamestrike = 7,
-		Pyroblast = 8,
-		BurningSoul = 9,
-		 
-		ImprovedScorch = 10,
-		MoltenShields = 11,
-		MasterofElements = 12,
-		 
-		PlayingWithFire = 13,
-		CriticalMass = 14,
-		BlastWave = 15,
-		 
-		BlazingSpeed = 16,
-		FirePower = 17,
-		 
-		Pyromaniac = 18,
-		Combustion = 19,
-		MoltenFury = 20,
-
-		EmpoweredFireball = 21,
-
-		DragonsBreath = 22,
+		ScorchRank10 = 42858,
+		ScorchRank11 = 42859,
 	}
 --Frost
 	ids.Frost_Ability = {
@@ -242,20 +206,28 @@ local ConROC_Mage, optionMaxIds = ...;
 		BlizzardRank5 = 10186,
 		BlizzardRank6 = 10187,
 		BlizzardRank7 = 27085,
-		ColdSnap = 12472,
+		BlizzardRank8 = 42939,
+		BlizzardRank9 = 42940,
+		ColdSnap = 11958,
 		ConeofColdRank1 = 120,
 		ConeofColdRank2 = 8492,
 		ConeofColdRank3 = 10159,
 		ConeofColdRank4 = 10160,
 		ConeofColdRank5 = 10161,
 		ConeofColdRank6 = 27087,
+		ConeofColdRank7 = 42930,
+		ConeofColdRank8 = 42931,
+		DeepFreeze = 44572,
 		IceBarrierRank1 = 11426,
 		IceBarrierRank2 = 13031,
 		IceBarrierRank3 = 13032,
 		IceBarrierRank4 = 13033,
 		IceBarrierRank5 = 27134,
 		IceBarrierRank6 = 33405,
-		IceBlock = 11958,
+		IceBarrierRank7 = 43038,
+		IceBarrierRank8 = 43039,
+		IceBlock = 45438,
+		IcyVeins = 12472,
 		FrostArmorRank1 = 168,
 		FrostArmorRank2 = 7300,
 		FrostArmorRank3 = 7301,
@@ -264,6 +236,7 @@ local ConROC_Mage, optionMaxIds = ...;
 		IceArmorRank3 = 10219,
 		IceArmorRank4 = 10220,
 		IceArmorRank5 = 27124,		
+		IceArmorRank5 = 43008,		
 		FrostNovaRank1 = 122,
 		FrostNovaRank2 = 865,
 		FrostNovaRank3 = 6131,
@@ -275,6 +248,7 @@ local ConROC_Mage, optionMaxIds = ...;
 		FrostWardRank4 = 10177,
 		FrostWardRank5 = 28609,
 		FrostWardRank6 = 32796,
+		FrostWardRank7 = 43012,
 		FrostboltRank1 = 116,
 		FrostboltRank2 = 205,
 		FrostboltRank3 = 837,
@@ -289,41 +263,16 @@ local ConROC_Mage, optionMaxIds = ...;
 		FrostboltRank12 = 27071,
 		FrostboltRank13 = 27072,
 		FrostboltRank14 = 38697,
-	}
-	ids.Frost_Talent = {
-		FrostWarding = 1,
-		ImprovedFrostbolt = 2,
-		ElementalPrecision = 3,
-		 
-		IceShards = 4,
-		Frostbite = 5,
-		ImprovedFrostNova = 6,
-		Permafrost = 7,
-		 
-		PiercingIce = 8,
-		IcyVeins = 9,
-		ImprovedBlizzard = 10,
-		 
-		ArcticReach = 11,
-		FrostChanneling = 12,
-		Shatter = 13,
-		 
-		FrozenCore = 14,
-		ColdSnap = 15,
-		ImprovedConeofCold = 16,
-		 
-		IceFloes = 17,
-		WintersChill = 18,
-		 
-		IceBarrier = 19,
-		ArticWinds = 20,
-
-		EmpoweredFrostbolt = 21,
-
-		SummonWaterElemental = 22,
+		FrostboltRank15 = 42841,
+		FrostboltRank16 = 42842,
 	}
 -- Auras
 	ids.Player_Buff = {
+		FingersofFrost = 74396,
+		HotStreak = 48108,
+		MissileBarrage = 44401,
+		Fireball = 57761,
+		Firestarter = 54741,
 
 	}
 	ids.Player_Debuff = {
@@ -332,7 +281,8 @@ local ConROC_Mage, optionMaxIds = ...;
 	ids.Target_Debuff = {
 		Chilled = 6136,
 		FireVulnerability = 22959,
-		WintersChill = 12579,		
+		WintersChill = 12579,
+		ArcaneBlast = 36032,
 	}
 	ids.optionMaxIds = {
 		

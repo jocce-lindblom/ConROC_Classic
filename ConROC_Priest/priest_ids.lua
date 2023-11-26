@@ -3,7 +3,8 @@ local ConROC_Priest, optionMaxIds = ...;
 
 --General
 	ids.Racial = {
-
+		Berserking = 26297,
+		Perception = 20600,
 	}
 	ids.Spec = {
 		Discipline = 1,
@@ -35,7 +36,7 @@ local ConROC_Priest, optionMaxIds = ...;
 		InnerFireRank9 = 48168,
 		InnerFocus = 14751,
 		Levitate = 1706,
-		ManaBurnRank1 = 8129,
+		ManaBurn = 8129,
 		MassDispel = 32375, --new
 		PowerInfusion = 10060,
 		PowerWordFortitudeRank1 = 1243,
@@ -71,46 +72,7 @@ local ConROC_Priest, optionMaxIds = ...;
 		ShackleUndeadRank2 = 9485,
 		ShackleUndeadRank3 = 10955,
 	}
-	ids.Disc_Talent = {
-		UnbreakableWill = 1,
-		TwinDisciplines = 2,
-
-		SilentResolve = 3,
-		ImprovedInnerFire = 4,
-		ImprovedPowerWordFortitude = 5,
-		Martyrdom = 6,
-
-		Meditation = 7,
-		InnerFocus = 8,
-		ImprovedPowerWordShield = 9,
-
-		Absolution = 10,
-		MentalAgility = 11,
-		ImprovedManaBurn = 12,
-
-		ReflectiveShield = 13,
-		MentalStrength = 14,
-		SoulWarding = 15,
-
-		FocusedPower = 16,
-		Enlightenment = 17,
-
-		FocusedWill = 18,
-		PowerInfusion = 19,
-		ImprovedFlashHeal = 20,
-
-		RenewedHope = 21,
-		Rapture = 22,
-		Aspiration = 23,
-
-		DivineAegis = 24,
-		PainSuppression = 25,
-		Grace = 26,
-
-		BorrowedTime = 27,
-
-		Penance = 28,
-	}	
+		
 --Holy
 	ids.Holy_Ability = {
 		AbolishDisease = 552,
@@ -219,45 +181,7 @@ local ConROC_Priest, optionMaxIds = ...;
 		SmiteRank11 = 48122, --new
 		SmiteRank12 = 48123,
 	}
-	ids.Holy_Talent = {
-		HealingFocus = 1,
-		ImprovedRenew = 2,
-		HolySpecialization = 3,
-		 
-		SpellWarding = 4,
-		DivineFury = 5,
-		 
-		DesperatePrayer = 6,
-		BlessedRecovery = 7,
-		Inspiration = 8,
-
-		HolyReach = 9,
-		ImprovedHealing = 10,
-		SearingLight = 11,
-
-		HealingPrayers = 12,
-		SpiritofRedemption = 13,
-		SpiritualGuidance = 14,
-
-		SurgeofLight = 15,
-		SpiritualHealing = 16,
-
-		HolyConcentration = 17,
-		Lightwell = 18,
-		BlessedResilience = 19,
-
-		BodyandSoul = 20,
-		EmpoweredHealing = 21,
-		Serendipity = 22,
-
-		EmpoweredRenew = 23,
-		CircleofHealing = 24,
-		TestofFaith = 25,
-
-		DivineProvidence = 26,
-
-		GuardianSpirit = 27,
-	}
+	
 --Shadow
 	ids.Shad_Ability = {
 		DevouringPlagueRank1 = 2944, --new
@@ -269,7 +193,6 @@ local ConROC_Priest, optionMaxIds = ...;
 		DevouringPlagueRank7 = 25467,
 		DevouringPlagueRank8 = 48299,
 		DevouringPlagueRank9 = 48300,
-
 		Fade = 586,
 		MindBlastRank1 = 8092,
 		MindBlastRank2 = 8102,
@@ -331,56 +254,26 @@ local ConROC_Priest, optionMaxIds = ...;
 		Shadowform = 15473,
 		Silence = 15487,
 		VampiricEmbrace = 15286,
+		VampiricTouchRank1 = 34914,
+		VampiricTouchRank2 = 34916,
+		VampiricTouchRank3 = 34917,
+		VampiricTouchRank4 = 48159,
+		VampiricTouchRank5 = 48160,
 	}
-	ids.Shad_Talent = {
-		SpiritTap = 1,
-		ImprovedSpiritTap = 2,
-		Darkness = 3,
 
-		ShadowAffinity = 4,
-		ImprovedShadowWordPain = 5,
-		ShadowFocus = 6,
-
-		ImprovedPsychicScream = 7,
-		ImprovedMindBlast = 8,
-		MindFlay = 9,
-
-		VeiledShadows = 10,
-		ShadowReach = 11,
-		ShadowWeaving = 12,
-
-		Silence = 13,
-		VampiricEmbrace = 14,
-		ImprovedVampiricEmbrace = 15,
-		FocusedMind = 16,
-
-		MindMelt = 17,
-		ImprovedDevouringPlague = 18,
-
-		Shadowform = 19,
-		ShadowPower = 20,
-
-		ImprovedShadowform = 21,
-		Misery = 22,
-
-		PsychicHorror = 23,
-		VampiricTouch = 24,
-		PainandSuffering = 25,
-
-		TwistedFaith = 26,
-
-		Dispersion = 27,
-	}
 -- Auras
 	ids.Player_Buff = {
-		HymnofHope = 64904;
-		VampiricEmbrace = 15286;
+		HymnofHope = 64904,
+		VampiricEmbrace = 15286,
+		ShadowWeavingRank1 = 15257,
+		ShadowWeavingRank2 = 15331,
+		ShadowWeavingRank3 = 15332,
 	}
 	ids.Player_Debuff = {
 		WeakendSoul = 6788,
 	}
 	ids.Target_Debuff = {
-		HymnofHope = 64904;
+		HymnofHope = 64904,
 	}
 	ids.optionMaxIds = {
 		

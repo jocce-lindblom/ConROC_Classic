@@ -1,21 +1,19 @@
+local printTalentsMode = false
+
+-- Slash command for printing talent tree with talent names and ID numbers
+SLASH_CONROCPRINTTALENTS1 = "/ConROCPT"
+SlashCmdList["CONROCPRINTTALENTS"] = function()
+    printTalentsMode = not printTalentsMode
+    ConROC:PopulateTalentIDs()
+end
+
 ConROC.DeathKnight = {};
 
 local ConROC_DeathKnight, ids = ...;
-local currentSpec = nil;
-function ConROC:EnableRotationModule()
-	self.Description = 'DeathKnight';
-	self.NextSpell = ConROC.DeathKnight.Damage;
-
-	self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
-	self:RegisterEvent("PLAYER_TALENT_UPDATE");
-	self.lastSpellId = 0;
-	
-	--ConROC:SpellmenuClass();
-	--ConROCSpellmenuFrame:Hide();
-	ConROCToggleMover:Show()
-	ConROCButtonFrame:Show()
-
-end
+local optionMaxIds = ...;
+local currentSpecName
+local useOpening = false;
+local openingNo	= 0;
 function ConROC:EnableDefenseModule()
 	self.NextDef = ConROC.DeathKnight.Defense;
 end
@@ -24,13 +22,58 @@ function ConROC:UNIT_SPELLCAST_SUCCEEDED(event, unitID, lineID, spellID)
 	if unitID == 'player' then
 		self.lastSpellId = spellID;
 	end
-	
-	--ConROC:JustSundered(spellID);
 end
-function ConROC:PLAYER_TALENT_UPDATE()
-	ConROC:SpecUpdate();
+
+function ConROC:PopulateTalentIDs()
+    local numTabs = GetNumTalentTabs()
+    
+    for tabIndex = 1, numTabs do
+        local tabName = GetTalentTabInfo(tabIndex) .. "_Talent"
+        if printTalentsMode then
+        	print(tabName..": ")
+        else
+        	ids[tabName] = {}
+    	end
+        
+        local numTalents = GetNumTalents(tabIndex)
+
+        for talentIndex = 1, numTalents do
+            local name, _, _, _, _ = GetTalentInfo(tabIndex, talentIndex)
+
+            if name then
+                local talentID = string.gsub(name, "%s", "") -- Remove spaces from talent name
+                if printTalentsMode then
+                	print(talentID .." = ID no: ", talentIndex)
+                else
+                	ids[tabName][talentID] = talentIndex
+                end
+            end
+        end
+    end
+    if printTalentsMode then printTalentsMode = false end
 end
-local Racial, Spec, Stance, Blood_Ability, Blood_Talent, Frost_Ability, Frost_Talent, Unholy_Ability, Unholy_Talent, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Stance, ids.Blood_Ability, ids.Blood_Talent, ids.Frost_Ability, ids.Frost_Talent, ids.Unholy_Ability, ids.Unholy_Talent, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;	
+ConROC:PopulateTalentIDs()
+local Racial, Spec, Blood_Ability, Blood_Talent, Frost_Ability, Frost_Talent, Unholy_Ability, Unholy_Talent, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Blood_Ability, ids.Blood_Talent, ids.Frost_Ability, ids.Frost_Talent, ids.Unholy_Ability, ids.Unholy_Talent, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;	
+--[[
+	Talents is populated into a table with the names without spaces.
+	so to target them in the table use Tablename.TalentName, an example:
+	Blood_Talent.VeteranoftheThirdWar. This can then for example be used with the function
+	ConROC:TalentChoosen(Spec.Blood, Blood_Talent.VeteranoftheThirdWar) that
+	returns "true/false, currentRank, maxRank, name, tier" of the supplied talent
+	To for example check how many points you have in a talent, that could have different buff ID
+	for different ranks of the talent.
+--]]
+function ConROC:SpecUpdate() 
+	currentSpecName = ConROC:currentSpec()
+
+	if currentSpecName then
+	   ConROC:Print(self.Colors.Info .. "Current spec:", self.Colors.Success ..  currentSpecName)
+	else
+	   ConROC:Print(self.Colors.Error .. "You do not currently have a spec.")
+	end
+end
+ConROC:SpecUpdate();
+
 --Presence
 local _BloodPresence = Blood_Ability.BloodPresence;
 local _FrostPresence = Frost_Ability.FrostPresence;
@@ -88,39 +131,7 @@ local _bloodrunes = 2;
 local _unholyrunes = 2;
 local _frostrunes = 2;
 local _rundeCD = select(2, GetRuneCooldown(1));
-
-function ConROC:SpellMenuUpdate()
-	--ConROC:SpecUpdate();
-end
-function ConROC:SpecUpdate() 
-	local _s1, _s2, _s3 = ConROC:SpecTally();
-	local _s = math.max(_s1, _s2, _s3);
-	if _s == _s1 then
-		currentSpec = "blood";
-	elseif _s == _s2 then
-		currentSpec = "frost";
-	elseif _s == _s3 then
-		currentSpec = "unholy";
-	else
-		currentSpec = nil;
-	end
-	print("Current spec", currentSpec);
-end
-ConROC:SpecUpdate();	
 	
-function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
---Character
-	local plvl 												= UnitLevel('player');
-	
---Racials
-
---Resources
-	local _Runes, br1, br2, ur1, ur2, fr1, fr2 = dkrunes();
-	--local _RunicPower, _RunicPower_Max = ConROC:PlayerPower('RunicPower');
-	--local _Runes 													= UnitPower('player', Enum.PowerType.Runes);
-	local _RunicPower 												= UnitPower('player', Enum.PowerType.RunicPower);
-	local _RunicPower_Max 											= UnitPowerMax('player', Enum.PowerType.RunicPower);
-
 --Ranks
 	--Blood
 	if IsSpellKnown(Blood_Ability.BloodBoilRank4) then _BloodBoil = Blood_Ability.BloodBoilRank4;
@@ -176,7 +187,7 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 	elseif IsSpellKnown(Unholy_Ability.CorpseExplosionRank4) then _CorpseExplosion = Unholy_Ability.CorpseExplosionRank4;
 	elseif IsSpellKnown(Unholy_Ability.CorpseExplosionRank3) then _CorpseExplosion = Unholy_Ability.CorpseExplosionRank3;
 	elseif IsSpellKnown(Unholy_Ability.CorpseExplosionRank2) then _CorpseExplosion = Unholy_Ability.CorpseExplosionRank2; end
-	
+
 	if IsSpellKnown(Unholy_Ability.DeathandDecayRank4) then _DeathandDecay = Unholy_Ability.DeathandDecayRank4;
 	elseif IsSpellKnown(Unholy_Ability.DeathandDecayRank3) then _DeathandDecay = Unholy_Ability.DeathandDecayRank3;
 	elseif IsSpellKnown(Unholy_Ability.DeathandDecayRank2) then _DeathandDecay = Unholy_Ability.DeathandDecayRank2; end
@@ -201,6 +212,98 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 	elseif IsSpellKnown(Unholy_Ability.ScourgeStrikeRank3) then _ScourgeStrike = Unholy_Ability.ScourgeStrikeRank3;
 	elseif IsSpellKnown(Unholy_Ability.ScourgeStrikeRank2) then _ScourgeStrike = Unholy_Ability.ScourgeStrikeRank2; end
 	
+ids.optionMaxIds = {
+	--Blood
+	BloodBoil = _BloodBoil,
+	BloodStrike = _BloodStrike,
+	BloodTap = _BloodTap,
+	DancingRuneWeapon = _DancingRuneWeapon,
+	DarkCommand = _DarkCommand,
+	BloodDeathCoil = _BloodDeathCoil,
+	DeathPact = _DeathPact,
+	HeartStrike = _HeartStrike,
+	MarkofBlood = _MarkofBlood,
+	Pestilence = _Pestilence,
+	RuneTap = _RuneTap,
+	Strangulate = _Strangulate,
+	UnholyFrenzy = _UnholyFrenzy,
+	VampiricBlood = _VampiricBlood,
+	--Frost
+	ChainsofIce = _ChainsofIce,
+	EmpowerRuneWeapon = _EmpowerRuneWeapon,
+	FrozenRuneWeapon = _FrozenRuneWeapon,
+	FrostStrike = _FrostStrike,
+	HornofWinter = _HornofWinter,
+	HowlingBlast = _HowlingBlast,
+	HungeringCold = _HungeringCold,
+	IceboundFortitude = _IceboundFortitude,
+	IcyTouch = _IcyTouch,
+	Lichborne = _Lichborne,
+	MindFreeze = _MindFreeze,
+	Obliterate = _Obliterate,
+	RuneStrike = _RuneStrike,
+	UnbreakableArmor = _UnbreakableArmor,
+	--Unholy
+	AntiMagicShell = _AntiMagicShell,
+	AntiMagicZone = _AntiMagicZone,
+	ArmyoftheDead = _ArmyoftheDead,
+	BoneShield = _BoneShield,
+	CorpseExplosion = _CorpseExplosion,
+	DeathandDecay = _DeathandDecay,
+	UnholyDeathCoil = _UnholyDeathCoil,
+	DeathGrip = _DeathGrip,
+	DeathStrike = _DeathStrike,
+	GhoulFrenzy = _GhoulFrenzy,
+	PlagueStrike = _PlagueStrike,
+	RaiseDead = _RaiseDead,
+	ScourgeStrike = _ScourgeStrike,
+	SummonGargoyle = _SummonGargoyle
+}
+
+function ConROC:EnableRotationModule()
+	self.Description = 'DeathKnight';
+	self.NextSpell = ConROC.DeathKnight.Damage;
+
+	self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
+	self:RegisterEvent("PLAYER_TALENT_UPDATE");
+	self.lastSpellId = 0;
+	
+	ConROC:SpellmenuClass();
+	--ConROCSpellmenuFrame:Hide();
+	--ConROCToggleMover:Show()
+	ConROCButtonFrame:Show()
+end
+
+function ConROC:PLAYER_TALENT_UPDATE()
+	ConROC:SpecUpdate();
+	if ConROCSpellmenuFrame:IsVisible() then
+		ConROCSpellmenuFrame_CloseButton:Hide();
+		ConROCSpellmenuFrame_Title:Hide();
+		ConROCSpellmenuClass:Hide();
+		ConROCSpellmenuFrame_OpenButton:Show();
+		optionsOpened = false;
+		ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
+	else
+		ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
+	end
+end
+function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
+--Character
+	local plvl 									= UnitLevel('player');
+	
+--Racials
+
+--Resources
+	local _Runes, br1, br2, ur1, ur2, fr1, fr2 	= dkrunes();
+	--local _RunicPower, _RunicPower_Max = ConROC:PlayerPower('RunicPower');
+	--local _Runes 								= UnitPower('player', Enum.PowerType.Runes);
+	local _RunicPower 							= UnitPower('player', Enum.PowerType.RunicPower);
+	local _RunicPower_Max 						= UnitPowerMax('player', Enum.PowerType.RunicPower);
+
+--Presence
+	local BloodPresence										= ConROC:BuffName(_BloodPresence, timeShift)
+	local FrostPresence										= ConROC:BuffName(_FrostPresence, timeShift)
+	local UnholyPresence									= ConROC:BuffName(_UnholyPresence, timeShift)
 --Abilities
 	local BloodBoilRDY		 								= ConROC:AbilityReady(_BloodBoil, timeShift);
 		local inBBRange 										= ConROC:IsSpellInRange(_BloodBoil, 'target');
@@ -226,9 +329,12 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 	local fRWRDY											= ConROC:AbilityReady(_FrozenRuneWeapon, timeShift);
 	local fStrikeRDY										= ConROC:AbilityReady(_FrostStrike, timeShift);
 	local hornRDY											= ConROC:AbilityReady(_HornofWinter, timeShift);
+		local hornBUFF											= ConROC:Buff(_HornofWinter, timeShift);
+	if IsSpellKnown(_HowlingBlast) then
 	local hBlastRDY											= ConROC:AbilityReady(_HowlingBlast, timeShift);
 		local hBlastRange 										= ConROC:IsSpellInRange(_HowlingBlast, 'target');
 		local tarInhBlast										= ConROC:Targets(_HowlingBlast);
+	end
 	local hColdRDY											= ConROC:AbilityReady(_HungeringCold, timeShift);
 	local ibFortitudeRDY									= ConROC:AbilityReady(_IceboundFortitude, timeShift);
 	local iTouchRDY											= ConROC:AbilityReady(_IcyTouch, timeShift);
@@ -261,11 +367,15 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 --		local sArmorDEBUFF, sArmorCount							= ConROC:TargetDebuff(_SunderArmor, timeShift);	
 --		local sArmorDEBUFF2		 								= ConROC:DebuffName(_SunderArmor, timeShift);	
 --		local sArmorDUR											= sArmorEXP - GetTime();
-	
+
+--Talents	
+	local hasSS												= ConROC:TalentChosen(Spec.Unholy, Unholy_Talent.ScourgeStrike)
 --Conditions
 	local hasKMBuff											= ConROC:BuffName(ids.Player_Buff.KillingMachine, timeShift);
 	local hasRimeBuff										= ConROC:BuffName(ids.Player_Buff.FreezingFog, timeShift);
 	local inStance											= GetShapeshiftForm();
+	local summoned 											= ConROC:CallPet();
+	local assist 											= ConROC:PetAssist();
 	local incombat 											= UnitAffectingCombat('player');	
 	local playerPh 											= ConROC:PercentHealth('player');
 	local targetPh 											= ConROC:PercentHealth('target');
@@ -280,21 +390,13 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 	elseif IsSpellKnown(_BloodStrike) then
 		tarInMelee = ConROC:Targets(_BloodStrike);
 	end
-	if IsSpellKnown(_BloodBoil) then
+	if ConROC_AoEButton:IsVisible() and IsSpellKnown(_BloodBoil) then
 		tarInAoe = ConROC:Targets(_BloodBoil);
 	end
 --print(sArmorDUR); -- Still Testing Sunder Refresh Misses.
---Indicators		
-	--[[
-	ConROC:AbilityMovement(_Charge, chargeRDY and inChRange and not incombat and inStance == Stance.Battle);
-	ConROC:AbilityMovement(_Intercept, interRDY and interRange and inStance == Stance.Berserker);
-	ConROC:AbilityTaunt(_HeroicStrike, ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and hStrikeRDY and rage >= 30 and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave)))); --Felt looks better then Burst.
-	ConROC:AbilityTaunt(_Cleave, ConROC:CheckBox(ConROC_SM_Rage_Cleave) and cleaveRDY and rage >= 40 and tarInMelee >= 2);
-	
-	ConROC:AbilityBurst(Arms_Ability.SweepingStrikes, sStrikesRDY and inStance == Stance.Battle and tarInMelee >= 2);
-	ConROC:AbilityBurst(Fury_Ability.DeathWish, dWishRDY and incombat and not ConROC:TarYou());
-	ConROC:AbilityBurst(Fury_Ability.Recklessness, reckRDY and incombat and not ConROC:TarYou() and ((not ConROC:TalentChosen(Spec.Fury, Fury_Talent.DeathWish)) or (ConROC:TalentChosen(Spec.Fury, Fury_Talent.DeathWish) and dWishRDY)));
-	--]]
+--Indicators
+	ConROC:AbilityBurst(_SummonGargoyle, sGargoyleRDY);
+
 	--print("_Runes",_Runes)
 	if (br1 and br2) then
 		_bloodrunes = 2;
@@ -320,10 +422,20 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 		_frostrunes = 0;
 	end
 	--print(_frostrunes);
---Warnings	
+
+--Warnings
+	if not assist and summoned and incombat then
+		ConROC:Warnings("Pet is NOT attacking!!!", true);		
+	end	
 	
 --Rotations
-	if currentSpec == "frost" then
+	if hornRDY and not hornBUFF and not incombat then
+		return _HornofWinter
+	end
+	if currentSpecName == "Frost" then
+		if not BloodPresence then
+			return _BloodPresence
+		end
 		if ConROC_AoEButton:IsVisible() then
 			if IsSpellKnown(_Pestilence) and pestRDY and (iTouchDEBUFF and pStrikeDEBUFF) then
 				if ((iTouchDur or pStrikeDur) < 5) and (_bloodrunes > 0) then 
@@ -393,95 +505,170 @@ function ConROC.DeathKnight.Damage(_, timeShift, currentSpell, gcd)
 		end
 	end
 
-	--if IsSpellKnown(_IcyTouch) and iTouchRDY then
-		--print("extra _IcyTouch");
-	--	return _IcyTouch;
-	--end
-	
-	--[[
-	if ConROC:CheckBox(ConROC_SM_Shout_BattleShout) and batShoutRDY and not batShoutBUFF then
-		return _BattleShout;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Shout_Bloodrage) and bRageRDY and rage <= 75 and playerPh >= 70 and incombat then
-		return Prot_Ability.Bloodrage;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and sArmorRDY and sArmorDEBUFF and sArmorDUR <= 6 then
-		return _SunderArmor;
-	end
-
-	if wwRDY and tarInMelee >= 3 and inStance == Stance.Berserker then
-		return Fury_Ability.Whirlwind;
-	end	
-	
-	if exeRDY and targetPh <= 20 and inStance == (Stance.Battle or Stance.Berserker) then
-		return _Execute;
-	end
-	
-	if oPowerRDY and inStance == Stance.Battle then
-		return _Overpower;
-	end
-	
-	if revengeRDY and inStance == Stance.Defensive then
-		return _Revenge;
-	end	
-	
-	if bThirstRDY then
-		return _Bloodthirst;
-	end		
-	
-	if ConROC:TalentChosen(Spec.Fury, Fury_Talent.Bloodthirst) then
-		if wwRDY and bthirstCD > 2 and inStance == Stance.Berserker then
-			return Fury_Ability.Whirlwind;
-		end	
-	else
-		if wwRDY and inStance == Stance.Berserker then
-			return Fury_Ability.Whirlwind;
+	if currentSpecName == "Blood" then
+		if not FrostPresence then
+			return _FrostPresence
+		end
+		if ConROC_AoEButton:IsVisible() then
+			if IsSpellKnown(_DeathandDecay) and dnDecayRDY then
+				return _DeathandDecay;
+			end
+			if IsSpellKnown(_IcyTouch) and iTouchRDY and not iTouchDEBUFF then
+				--print("iTouchDEBUFF", iTouchDEBUFF);
+				return _IcyTouch;
+			end
+			if IsSpellKnown(_PlagueStrike) and pStrikeRDY and not pStrikeDEBUFF then
+				--print("_PlagueStrike");
+				return _PlagueStrike;
+			end
+			if IsSpellKnown(_Pestilence) and pestRDY and (iTouchDEBUFF and pStrikeDEBUFF) then
+				if ((iTouchDur or pStrikeDur) < 5) and (_bloodrunes > 0) then 
+					return _Pestilence;
+				else
+					return _BloodBoil;
+				end
+			end
+		else
+			--[[if IsSpellKnown(_DeathGrip) and dGripRDY then
+				return _DeathGrip;
+			end--]]
+			if IsSpellKnown(_IcyTouch) and iTouchRDY and not iTouchDEBUFF then
+				return _IcyTouch;
+			end
+			if IsSpellKnown(_PlagueStrike) and pStrikeRDY and not pStrikeDEBUFF then
+				return _PlagueStrike;
+			end
+			if IsSpellKnown(_Pestilence) and pestRDY and (iTouchDEBUFF and pStrikeDEBUFF) and ((iTouchDur or pStrikeDur) < 5) then
+				return _Pestilence;
+			end
+			if IsSpellKnown(_DeathStrike) and dStrikeRDY then
+				return _DeathStrike;
+			end
+			if dRWRDY then
+				if ConROC:CheckBox(ConROC_SM_CD_UnholyFrenzy) and uFrenzyRDY then
+					return _UnholyFrenzy
+				elseif raiseDeadRDY then
+					return RaiseDead
+				else
+					return DancingRuneWeapon
+				end
+			end
+			if IsSpellKnown(_HeartStrike) and hStrikeRDY then
+				return _HeartStrike
+			end
+			if IsSpellKnown(_DeathStrike) and dStrikeRDY then
+				return _DeathStrike
+			end
+			if IsSpellKnown(_BloodTap) and bTapRDY then
+				return _BloodTap;
+			end
+			if IsSpellKnown(_BloodDeathCoil) and bDCoilRDY and (_RunicPower >= 40) then
+				return _BloodDeathCoil;
+			end
+			if IsSpellKnown(_IcyTouch) and iTouchRDY then
+				return _IcyTouch;
+			end
+			if IsSpellKnown(_BloodStrike) and bStrikeRDY and not bStrikeDEBUFF then
+				return _BloodStrike;
+			end
+			if IsSpellKnown(_EmpowerRuneWeapon) and eRWRDY then
+				return _EmpowerRuneWeapon;
+			end
+			if IsSpellKnown(_Pestilence) and pestRDY and (iTouchDEBUFF and pStrikeDEBUFF) then
+				if ((iTouchDur or pStrikeDur) < 5) and (_bloodrunes > 0) then 
+					return _Pestilence;
+				else
+					return _IcyTouch;
+				end
+			end
 		end
 	end
+	if currentSpecName == "Unholy" then
+		if not incombat and iTouchRDY and pStrikeRDY and bStrikeRDY and sGargoyleRDY and ConROC:CheckBox(ConROC_SM_Option_PrePull) then
+			useOpening = true
+			openingNo = 0;
+		else
+			useOpening = false
+		end
+		if useOpening then
+			if not UnholyPresence then
+				return _UnholyPresence;
+			end
+			if (openingNo == 0) and IsSpellKnown(_PlagueStrike) and pStrikeRDY and not pStrikeDEBUFF then
+				openingNo = 1
+				return _PlagueStrike;
+			end
+			if (openingNo == 1) and IsSpellKnown(_IcyTouch) and iTouchRDY and not iTouchDEBUFF then
+				openingNo = 2
+				return _IcyTouch;
+			end
+			if (openingNo == 2) and IsSpellKnown(_BloodStrike) and bStrikeRDY and (_bloodrunes > 0) then
+				if (_bloodrunes == 1) then
+					openingNo = 3
+				end
+				return _BloodStrike
+			end 
+			if (openingNo == 3) and isSpellKnown(_BloodTap) and (_bloodrunes < 1) and bTapRDY then
+				openingNo = 4
+				return _BloodTap
+			end
+			if (openingNo == 4) and IsSpellKnown(_DeathandDecay) and dnDecayRDY then
+				openingNo = 5
+				return _DeathandDecay
+			end
+			if (openingNo == 5) and IsSpellKnown(_GhoulFrenzy) and gFrenzyRDY then
+				openingNo = 6
+				return _GhoulFrenzy
+			end
+			if (openingNo == 6) and IsSpellKnown(_SummonGargoyle) and sGargoyleRDY then
+				openingNo = 7
+				return _SummonGargoyle
+			end
+			if (openingNo == 7) and IsSpellKnown(_EmpowerRuneWeapon) and eRWRDY then
+				openingNo = 8
+				return _EmpowerRuneWeapon
+			end
+			if (openingNo == 8) and isSpellKnown(_BloodTap) and bTapRDY then
+				openingNo = 9
+				return _BloodTap
+			end
+			if (openingNo == 9) and isSpellKnown(_ArmyoftheDead) and armyotDeadRDY then
+				openingNo = 10
+				return _ArmyoftheDead
+			end
+			if (openingNo == 10) and not BloodPresence then
+				useOpening = false
+				return _BloodPresence;
+			end
+			return
+		end
 
-	if sSlamRDY and ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-		return _ShieldSlam;
-	end
-	
-	if mStrikeRDY then
-		return _MortalStrike;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Debuff_Rend) and rendRDY and not rendDEBUFF and inStance == (Stance.Battle or Stance.Defensive) and not (ConROC:CreatureType('Mechanical') or ConROC:CreatureType('Elemental') or ConROC:CreatureType('Undead')) then
-		return _Rend;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Debuff_SunderArmor) and sArmorRDY and (not sArmorDEBUFF2 or sArmorCount < ConROC_SM_Debuff_SunderArmorCount:GetNumber()) and rage >= 30 then
-		return _SunderArmor;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Stun_PiercingHowl) and pHowlRDY and not pHowlDEBUFF and not hstringDEBUFF and tarInMelee >= 2 then
-		return Fury_Ability.PiercingHowl;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Stun_Hamstring) and hstringRDY and not hstringDEBUFF and not pHowlDEBUFF and inStance == (Stance.Battle or Stance.Berserker) then
-		return _Hamstring;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Stun_ConcussionBlow) and cBlowRDY then
-		return Prot_Ability.ConcussionBlow;
-	end
+		if IsSpellKnown(_BloodTap) and (_bloodrunes == 0) and bTapRDY then
+			return _BloodTap
+		end
+		if IsSpellKnown(_PlagueStrike) and pStrikeRDY and not pStrikeDEBUFF then
+			return _PlagueStrike;
+		end
+		if IsSpellKnown(_IcyTouch) and iTouchRDY and not iTouchDEBUFF then
+			return _IcyTouch;
+		end
+		if IsSpellKnown(_UnholyDeathCoil) and uDCoilRDY and (_RunicPower >= 40) then
+			return _UnholyDeathCoil;
+		end
+		if IsSpellKnown(_BloodStrike) and bStrikeRDY and not bStrikeDEBUFF then
+			return _BloodStrike;
+		end
+		if IsSpellKnown(_DeathandDecay) and dnDecayRDY then
+			return _DeathandDecay
+		end
+		if IsSpellKnown(_ScourgeStrike) and sStrikeRDY and bStrikeDEBUFF and iTouchDEBUFF and pStrikeDEBUFF then
+			return _ScourgeStrike;
+		end		
+		if IsSpellKnown(_BloodStrike) and bStrikeRDY then
+			return _BloodStrike;
+		end
 
-	if ConROC:CheckBox(ConROC_SM_Rage_Cleave) and cleaveRDY and rage >= 85 and tarInMelee >= 2 then
-		return _Cleave;
-	end	
-	
-	if ConROC:CheckBox(ConROC_SM_Rage_Slam) and slamRDY and not ConROC:TarYou() then
-		return _Slam;
-	end		
-
-	if ConROC:CheckBox(ConROC_SM_Rage_HeroicStrike) and hStrikeRDY and rage >= 85 and ((tarInMelee >= 1 and not ConROC:CheckBox(ConROC_SM_Rage_Cleave)) or (tarInMelee == 1 and ConROC:CheckBox(ConROC_SM_Rage_Cleave))) then
-		return _HeroicStrike;
-	end	
---]]
-	--print(" GetSpecializationInfoForClassID", GetSpecializationInfoForClassID )
+	end
 	return nil;
 end
 
@@ -492,97 +679,7 @@ function ConROC.DeathKnight.Defense(_, timeShift, currentSpell, gcd, tChosen)
 --Racials
 
 --Ranks
-	--Blood
-	--[[
-	local _MockingBlow = Arms_Ability.MockingBlowRank1;
-	local _ThunderClap = Arms_Ability.ThunderClapRank1;
-	
-	if IsSpellKnown(Arms_Ability.MockingBlowRank5) then _MockingBlow = Arms_Ability.MockingBlowRank5;
-	elseif IsSpellKnown(Arms_Ability.MockingBlowRank4) then _MockingBlow = Arms_Ability.MockingBlowRank4;
-	elseif IsSpellKnown(Arms_Ability.MockingBlowRank3) then _MockingBlow = Arms_Ability.MockingBlowRank3;
-	elseif IsSpellKnown(Arms_Ability.MockingBlowRank2) then _MockingBlow = Arms_Ability.MockingBlowRank2; end	
 
-	if IsSpellKnown(Arms_Ability.ThunderClapRank6) then _ThunderClap = Arms_Ability.ThunderClapRank6;
-	elseif IsSpellKnown(Arms_Ability.ThunderClapRank5) then _ThunderClap = Arms_Ability.ThunderClapRank5;
-	elseif IsSpellKnown(Arms_Ability.ThunderClapRank4) then _ThunderClap = Arms_Ability.ThunderClapRank4;
-	elseif IsSpellKnown(Arms_Ability.ThunderClapRank3) then _ThunderClap = Arms_Ability.ThunderClapRank3;
-	elseif IsSpellKnown(Arms_Ability.ThunderClapRank2) then _ThunderClap = Arms_Ability.ThunderClapRank2; end
-
-	--Frost
-	local _DemoralizingShout = Fury_Ability.DemoralizingShoutRank1;
-
-	if IsSpellKnown(Fury_Ability.DemoralizingShoutRank5) then _DemoralizingShout = Fury_Ability.DemoralizingShoutRank5;
-	elseif IsSpellKnown(Fury_Ability.DemoralizingShoutRank4) then _DemoralizingShout = Fury_Ability.DemoralizingShoutRank4;
-	elseif IsSpellKnown(Fury_Ability.DemoralizingShoutRank3) then _DemoralizingShout = Fury_Ability.DemoralizingShoutRank3;
-	elseif IsSpellKnown(Fury_Ability.DemoralizingShoutRank2) then _DemoralizingShout = Fury_Ability.DemoralizingShoutRank2; end
-	
---Resources	
-	local rage 												= UnitPower('player', Enum.PowerType.Rage);
-	local rageMax 											= UnitPowerMax('player', Enum.PowerType.Rage);
-	
---Abilities	
-	local mBlowRDY		 									= ConROC:AbilityReady(_MockingBlow, timeShift);
-	local retalRDY											= ConROC:AbilityReady(Arms_Ability.Retaliation, timeShift);
-	local tclapRDY											= ConROC:AbilityReady(_ThunderClap, timeShift);	
-		local tclapDEBUFF		 								= ConROC:TargetDebuff(_ThunderClap, timeShift);	
-		
-	local berRageRDY										= ConROC:AbilityReady(Fury_Ability.BerserkerRage, timeShift);
-	local cShoutRDY											= ConROC:AbilityReady(Fury_Ability.ChallengingShout, timeShift);
-	local dShoutRDY											= ConROC:AbilityReady(_DemoralizingShout, timeShift);
-		local dShoutDEBUFF										= ConROC:DebuffName(_DemoralizingShout);
-		local dRoarDEBUFF										= ConROC:DebuffName(99); --Demoralizing Roar
-		
-	local disarmRDY											= ConROC:AbilityReady(Prot_Ability.Disarm, timeShift);
-	local lStandRDY											= ConROC:AbilityReady(Prot_Ability.LastStand, timeShift);
-	local sBlockRDY											= ConROC:AbilityReady(Prot_Ability.ShieldBlock, timeShift);
-		local sBlockBUFF										= ConROC:Buff(Prot_Ability.ShieldBlock, timeShift);
-	local sWallRDY											= ConROC:AbilityReady(Prot_Ability.ShieldWall, timeShift);
-	local tauntRDY											= ConROC:AbilityReady(Prot_Ability.Taunt, timeShift);
-			
---Conditions	
-	local playerPh 											= ConROC:PercentHealth('player');
-	local inStance											= GetShapeshiftForm();
-	local tarInMelee										= 0;
-	local incombat 											= UnitAffectingCombat('player');
-	
-	if IsSpellKnown(Prot_Ability.Taunt) then
-		tarInMelee = ConROC:Targets(Prot_Ability.Taunt);
-	end
-	
---Indicators	
-	ConROC:AbilityTaunt(Prot_Ability.Taunt, ConROC:CheckBox(ConROC_SM_Role_Tank) and tauntRDY and inStance == Stance.Defensive and not ConROC:TarYou());
-	ConROC:AbilityTaunt(_MockingBlow, ConROC:CheckBox(ConROC_SM_Role_Tank) and mBlowRDY and inStance == Stance.Battle);
-	ConROC:AbilityTaunt(Fury_Ability.ChallengingShout, ConROC:CheckBox(ConROC_SM_Role_Tank) and cShoutRDY and tarInMelee >= 3);
-	
---Rotations	
-	if lStandRDY and incombat and playerPh <= 35 then
-		return Prot_Ability.LastStand;
-	end
-
-	if sWallRDY and inStance == Stance.Defensive and playerPh <= 25 and ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-		return Prot_Ability.ShieldWall;
-	end
-	
-	if sBlockRDY and not sBlockBUFF and inStance == Stance.Defensive then
-		return Prot_Ability.ShieldBlock;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Debuff_ThunderClap) and tclapRDY and not tclapDEBUFF and inStance == Stance.Battle then
-		return _ThunderClap;
-	end
-
-	if berRageRDY and inStance == Stance.Berserker then
-		return Fury_Ability.BerserkerRage;
-	end
-	
-	if ConROC:CheckBox(ConROC_SM_Shout_DemoralizingShout) and dShoutRDY and not (dShoutDEBUFF or dRoarDEBUFF) then
-		return _DemoralizingShout;
-	end
-	
-	if retalRDY and incombat and inStance == Stance.Battle and not ConROC:Equipped('Shields', 'SECONDARYHANDSLOT') then
-		return Arms_Ability.Retaliation;
-	end
-	--]]
 	return nil;
 end
 

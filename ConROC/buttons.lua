@@ -386,7 +386,7 @@ function ConROC:CreateDisplayWindow(parent, id)
 		if not frame then
 			frame = CreateFrame('Frame', 'ConROC_WindowSpell_' .. id, parent);
 			fontstring = frame:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
-			fontkey = frame:CreateFontString("ConROC_HotKey_" .. id, "ARTWORK", "GameFontHighlight");
+			fontkey = frame:CreateFontString("ConROC_HotKey_" .. id, "ARTWORK", "GameFontHighlightLarge");
 		end
 
 	frame:SetParent(ConROCWindow);
@@ -395,7 +395,7 @@ function ConROC:CreateDisplayWindow(parent, id)
 	frame:SetPoint('CENTER', 0, 0);
 	frame:SetSize(ConROC.db.profile.windowIconSize, ConROC.db.profile.windowIconSize);
 	frame:SetAlpha(ConROC.db.profile.transparencyWindow);
-
+	
 	fontstring:SetText(spellName);
 	fontstring:SetTextColor(Color.r, Color.g, Color.b, 1);
 	fontstring:SetPoint('BOTTOM', frame, 'TOP', 0, 2);
@@ -410,9 +410,14 @@ function ConROC:CreateDisplayWindow(parent, id)
 	end
 
 	fontkey:SetParent(frame);
-	fontkey:SetText(ConROC:FindKeybinding(id));
+	fontkey:SetText(ConROC:FindKeybinding(id, "CreateDisplayWindow"));
 	fontkey:SetPoint('TOP', frame, 'BOTTOM', 0, -2);
+	local existingFont, existingSize, existingFlags = fontkey:GetFont()
+	fontkey:SetFont(existingFont, existingSize, existingFlags.."OUTLINE")
 	fontkey:SetTextColor(1, 1, 1, 1);
+	-- Add Black Border (Shadow)
+	fontkey:SetShadowColor(0, 0, 0, 1)
+	fontkey:SetShadowOffset(0, 0) -- Adjust the values to control the thickness and direction of the border
 
 	if ConROC.db.profile.enableWindowKeybinds then
 		fontkey:Show();
@@ -546,9 +551,14 @@ function ConROC:CreateDefWindow(parent, id)
 	end
 
 	fontkey:SetParent(frame);
-	fontkey:SetText(ConROC:FindKeybinding(id));
+	fontkey:SetText(ConROC:FindKeybinding(id, "CreateDefWindow"));
 	fontkey:SetPoint('TOP', frame, 'BOTTOM', 0, -2);
+	local existingFont, existingSize, existingFlags = fontkey:GetFont()
+	fontkey:SetFont(existingFont, existingSize, existingFlags.."OUTLINE")
 	fontkey:SetTextColor(1, 1, 1, 1);
+	-- Add Black Border (Shadow)
+	fontkey:SetShadowColor(0, 0, 0, 1)
+	fontkey:SetShadowOffset(1, -1)
 
 	if ConROC.db.profile.enableWindowKeybinds then
 		fontkey:Show();
@@ -724,7 +734,8 @@ function ConROC:SpellmenuFrame()
 		end) --, frameTitle:GetParent().StopMovingOrSizing)
 
 	local fonttitle = frameTitle:CreateFontString(nil, "ARTWORK", "GameFontHighlight");
-		fonttitle:SetText(ConROC.Classes[classId] .. " Spells");
+		--fonttitle:SetText(ConROC.Classes[classId] .. " Spells");
+		fonttitle:SetText(select(1, GetClassInfo(classId)) .. " Spells");
 		fonttitle:SetPoint('TOP', frameTitle, 'TOP', 0, 0);
 
 
@@ -736,7 +747,8 @@ function ConROC:SpellmenuFrame()
 		otbutton:Show();
 		otbutton:SetAlpha(1);
 
-		otbutton:SetText(ConROC.Classes[classId] .. " Spells");
+		--otbutton:SetText(ConROC.Classes[classId] .. " Spells");
+		otbutton:SetText(select(1, GetClassInfo(classId)) .. " Spells");
 		otbutton:SetNormalFontObject("GameFontHighlightSmall");
 
 		otbutton:SetScript("OnEnter", ConROCTTOnEnter)
@@ -777,10 +789,9 @@ function ConROC:SpellmenuFrame()
 		if not (IsAltKeyDown()) then
 			self:Hide();
 			frameTitle:Show();
+			frame:SetSize(210, 300);
 			ConROCSpellmenuClass:Show();
 			optionsOpened = true;
-			frame:SetSize(180, 300);
-
 			ConROCSpellmenuFrame_CloseButton:Show();
 			ConROC:SpellMenuUpdate();
 			end
@@ -826,34 +837,91 @@ function ConROC:SpellmenuFrame()
 			optionsOpened = false;
 		end)
 end
-
-function ConROC:FindKeybinding(id)
+local slotsUsed = {}
+function ConROC:FindKeybinding(id,caller)
 	local keybind;
+	local btn;
+	local binding;
+	for k, button in pairs(self.Keybinds[id]) do
+		--[[if _G["Bartender4"] then
+			for actionBarNumber = 1, 10 do
+                local bar = _G["BT4Bar" .. actionBarNumber]
+                print("button",button)
+                for keyNumber = 1, 12 do
+                    local actionBarButtonId = (actionBarNumber - 1) * 12 + keyNumber
+                    local bindingKeyName = "ACTIONBUTTON" .. keyNumber
+                    if string.find(string.lower(button),string.lower("SHAPESHIFTBUTTON")) then
+                    	bindingKeyName = "BT4StanceButton" .. keyNumber
+                    	--return GetBindingKey(bindingKeyName);
+                    elseif string.find(string.lower(button),string.lower("ACTIONBUTTON")) then
+                    	bindingKeyName = "CLICK BT4Button" .. keyNumber
+                    	--return GetBindingKey(bindingKeyName);
+                    end
+                    -- If bar is disabled assume paging / stance switching on bar 1
+                    if actionBarNumber > 1 and bar and not bar.disabled then
+                        bindingKeyName = "CLICK BT4Button" .. actionBarButtonId .. ":LeftButton"
+                    end
+                    binding = bindingKeyName.bindstring or bindingKeyName.keyBoundTarget or ( "CLICK " .. bindingKeyName:GetName() .. ":LeftButton" )
+	                		
+                    print("button",button)
+                    print("GetBindingKey( actionBarButtonId )",GetBindingKey( binding ))
+                    return GetBindingKey(bindingKeyName);
+                end
+            end--]]
+        -- Use ElvUI's actionbars only if they are actually enabled.
+        if _G["ElvUI"] and _G[ "ElvUI_Bar1Button1" ] then
+			for a = 1, 10 do
+                for b = 1, 12 do
+                	if string.find(string.lower(button),string.lower("SHAPESHIFTBUTTON")) then
+                		btn = "SHAPESHIFTBUTTON" .. b
+                		if button == btn then
+	                		return GetBindingKey( button )
+						end
+                	else
+                		btn = _G["ElvUI_Bar" .. a .. "Button" .. b]
+                		if button == btn:GetName() then
+	                		binding = btn.bindstring or btn.keyBoundTarget or ( "CLICK " .. btn:GetName() .. ":LeftButton" )
+	                		
+		                    if a > 6 then
+			                    -- Checking whether bar is active.
+			                    local bar = _G["ElvUI_Bar" .. a]
 
-		for k, button in pairs(self.Keybinds[id]) do
+			                    if not bar or not bar.db.enabled then
+			                        binding = "ACTIONBUTTON" .. b
+			                    end
+			                end
+			                return GetBindingKey(binding);
+						end
+                	end
+                end
+            end
+		else
 			for i = 1, 12 do
-				if button == 'ElvUI_Bar1Button' .. i then
-					button = 'ACTIONBUTTON' .. i;
---				elseif button == 'MultiBarBottomLeftButton' .. i or button == 'ElvUI_Bar3Button' .. i then
-				elseif button == 'MultiBarBottomLeftButton' .. i or button == 'ElvUI_Bar6Button' .. i then
-					button = 'MULTIACTIONBAR1BUTTON' .. i;
---				elseif button == 'MultiBarBottomRightButton' .. i or button == 'ElvUI_Bar2Button' .. i then
-				elseif button == 'MultiBarBottomRightButton' .. i or button == 'ElvUI_Bar5Button' .. i then
-					button = 'MULTIACTIONBAR2BUTTON' .. i;
---				elseif button == 'MultiBarRightButton' .. i or button == 'ElvUI_Bar5Button' .. i then
-				elseif button == 'MultiBarRightButton' .. i or button == 'ElvUI_Bar3Button' .. i then
-					button = 'MULTIACTIONBAR3BUTTON' .. i;
-				elseif button == 'MultiBarLeftButton' .. i or button == 'ElvUI_Bar4Button' .. i then
-					button = 'MultiActionBar4Button' .. i;
-				elseif button == 'ElvUI_Bar2Button' .. i then
-					button = 'ELVUIBAR2BUTTON' .. i;
+				if string.find(string.lower(button),string.lower("SHAPESHIFTBUTTON")) then
+            		btn = "SHAPESHIFTBUTTON" .. i
+            		if button == btn then
+                		return GetBindingKey( button )
+					end
+            	else
+					if string.lower(button) == string.lower("ACTIONBUTTON" .. i) then
+						return GetBindingKey('ACTIONBUTTON' .. i)
+					elseif string.lower(button) == string.lower("MultiBarBottomLeftButton" .. i) then
+						return GetBindingKey('MULTIACTIONBAR1BUTTON' .. i)
+					elseif string.lower(button) == string.lower("MultiBarBottomRightButton" .. i) then
+						return GetBindingKey('MULTIACTIONBAR2BUTTON' .. i)
+					elseif string.lower(button) == string.lower("MultiBarRightButton" .. i) then
+						return GetBindingKey('MULTIACTIONBAR3BUTTON' .. i)
+					elseif string.lower(button) == string.lower("MultiBarLeftButton" .. i) then
+						return GetBindingKey('MultiActionBar4Button' .. i)
+					elseif string.lower(button) == string.lower("ElvUI_Bar2Button" .. i) then
+						return GetBindingKey('ELVUIBAR2BUTTON' .. i)
+					end					
 				end
-
-				keybind = GetBindingKey(button);
 			end
 		end
-
-	return keybind;
+	end
+	--print('keybind', keybind);
+	--return keybind;
 end
 
 function ConROC:CreateDamageOverlay(parent, id)
@@ -2018,7 +2086,6 @@ function ConROC:FetchElvUI()
 						end
 
 						tinsert(self.Keybinds[spellId], 'ElvUI_Bar' .. x .. 'Button' .. i);
-
 					end
 				end
 			end

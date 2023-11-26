@@ -24,10 +24,6 @@ local ConROC_Druid, optionMaxIds = ...;
 		EntanglingRootsRank8 = 53308,
 		FaerieFireRank1 = 770,
 		ForceofNatureRank1 = 33831,
---		ImprovedFaerieFireRank1 = 33600,
---		ImprovedFaerieFireRank2 = 33601,
---		ImprovedFaerieFireRank3 = 33602,
-		InsectSwarmRank1 = 5570,
 		HibernateRank1 = 2637,
 		HibernateRank2 = 18657,
 		HibernateRank3 = 18658,
@@ -37,6 +33,13 @@ local ConROC_Druid, optionMaxIds = ...;
 		HurricaneRank4 = 27012,	
 		HurricaneRank5 = 48467,	
 		Innervate = 29166,
+		InsectSwarmRank1 = 5570,
+		InsectSwarmRank2 = 24974,
+		InsectSwarmRank3 = 24975,
+		InsectSwarmRank4 = 24976,
+		InsectSwarmRank5 = 24977,
+		InsectSwarmRank6 = 27013,
+		InsectSwarmRank7 = 48468,
 		MoonfireRank1 = 8921,
 		MoonfireRank2 = 8924,
 		MoonfireRank3 = 8925,
@@ -64,6 +67,10 @@ local ConROC_Druid, optionMaxIds = ...;
 		SootheAnimalRank2 = 8955,
 		SootheAnimalRank3 = 9901,
 		SootheAnimalRank4 = 26995,
+		StarfallRank1 = 48505,
+		StarfallRank2 = 53199,
+		StarfallRank3 = 53200,
+		StarfallRank4 = 53201,
 		StarfireRank1 = 2912,
 		StarfireRank2 = 8949,
 		StarfireRank3 = 8950,
@@ -81,7 +88,12 @@ local ConROC_Druid, optionMaxIds = ...;
 		ThornsRank5 = 9756,
 		ThornsRank6 = 9910,
 		ThornsRank7 = 26992,
-		ThornsRank8 = 83307,
+		ThornsRank8 = 53307,
+		TyphoonRank1 = 50516,
+		TyphoonRank2 = 53223,
+		TyphoonRank3 = 53225,
+		TyphoonRank4 = 53226,
+		TyphoonRank5 = 61384,
 		WrathRank1 = 5176,
 		WrathRank2 = 5177,
 		WrathRank3 = 5178,
@@ -95,51 +107,15 @@ local ConROC_Druid, optionMaxIds = ...;
 		WrathRank11 = 48459,
 		WrathRank12 = 48461,
 	}
-	ids.Bal_Talent = {
-		StarlightWrath = 1,
-		Genesis = 2,
-
-		Moonglow = 3,
-		NaturesMajesty = 4,
-		ImprovedMoonfire = 5,
-
-		Brambles = 6,
-		NaturesGrace = 7,
-		NaturesSplendor = 8;
-		NaturesReach = 9,
-		
-		Vengeance = 10,
-		CelestialFocus = 11,
-
-		LunarGuidance = 12,
-		InsectSwarm = 13,
-		ImprovedInsectSwarm = 14;
-
-		Dreamstate = 15,
-		Moonfury = 16,
-		BalanceofPower = 17,
-
-		MoonkinForm = 18,
-		ImprovedMoonkinForm = 19,
-		ImprovedFaerieFire = 20,
-
-		OwlkinFrenzy = 21,
-		WrathofCenarius = 22,
-
-		Eclipse = 23,
-		Typhoon = 24,
-		ForceofNature = 25,
-		GaleWinds = 26,
-
-		EarthAndMoon = 27,
-
-		Starfall = 28,		 		 
-	}
 --Feral
 	ids.Feral_Ability = {
 		FaerieFireFeralRank1 = 16857,
 		TrackHumanoid = 5225,
 		TravelForm = 783,
+		AquaticForm = 1066,
+		FlightForm = 33943,
+		SwiftFlightForm = 40120,
+		autoAttack = 6603,
 
 		-- Cat
 		CatForm = 768,
@@ -169,6 +145,8 @@ local ConROC_Druid, optionMaxIds = ...;
 		FerociousBiteRank6 = 24248,
 		FerociousBiteRank7 = 48576,
 		FerociousBiteRank8 = 48577,
+		MaimRank1 = 22570,
+		MaimRank2 = 49802,
 		MangleCatRank1 = 33876,
 		MangleCatRank2 = 33982,
 		MangleCatRank3 = 33983,
@@ -203,6 +181,7 @@ local ConROC_Druid, optionMaxIds = ...;
 		RipRank7 = 27008,
 		RipRank8 = 49799,
 		RipRank9 = 49800,
+		SavageRoar = 52610,
 		ShredRank1 = 5221,
 		ShredRank2 = 6800,
 		ShredRank3 = 8992,
@@ -258,6 +237,8 @@ local ConROC_Druid, optionMaxIds = ...;
 		MaulRank8 = 26996,
 		MaulRank9 = 48479,
 		MaulRank10 = 48480,
+		PrimalFuryRank1 = 37116,
+		PrimalFuryRank2 = 37117,
 		SurvivalInstinctsRank1 = 61336,
 		SwipeBearRank1 = 779,
 		SwipeBearRank2 = 780,
@@ -268,57 +249,14 @@ local ConROC_Druid, optionMaxIds = ...;
 		SwipeBearRank7 = 48561,
 		SwipeBearRank8 = 48562,
 	}
-	ids.Feral_Talent = {
-		Ferocity = 1,
-		FeralAggression = 2,
-		 
-		FeralInstinct = 3,
-		SavageFury = 4,
-		ThickHide = 5,
-
-		FeralSwiftness = 6,
-		SurvivalInstincts = 7,
-		SharpenedClaws = 8,
-
-		ShreddingAttacks = 9,
-		PredatoryStrikes = 10,
-		PrimalFury = 11,
-		PrimalPrecision = 12,
-
-		BrutalImpact = 13,
-		FeralCharge = 14,
-		NurturingInstinct = 15,
-		
-		NaturalReaction = 16,
-		HeartoftheWild = 17,
-		SurvivaloftheFittest = 18,
-
-		LeaderofthePack = 19,
-		ImprovedLeaderofthePack = 20,
-		PrimalTenacity = 21,
-		
-		ProtectorofthePack = 22,
-		PredatoryInstincts = 23,
-		
-		InfectedWounds = 24,
-
-		KingoftheJungle = 25,
-		Mangle = 26,
-		ImprovedMangle = 27,
-
-		RendandTear = 28,
-		PrimalGore = 29,
-
-		Berserk = 30,
-	}
 --Restoration
 	ids.Resto_Ability = {
 		AbolishPoison = 2893,
 		CurePoison = 8946,
 		GiftoftheWildRank1 = 21849,
-		GiftoftheWildRank1 = 21850,
-		GiftoftheWildRank1 = 26991,
-		GiftoftheWildRank1 = 48470,
+		GiftoftheWildRank2 = 21850,
+		GiftoftheWildRank3 = 26991,
+		GiftoftheWildRank4 = 48470,
 		HealingTouchRank1 = 5185,
 		HealingTouchRank2 = 5186,
 		HealingTouchRank3 = 5187,
@@ -383,6 +321,13 @@ local ConROC_Druid, optionMaxIds = ...;
 		RejuvenationRank14 = 48440,
 		RejuvenationRank15 = 48441,
 		RemoveCurse = 2782,
+		ReviveRank1 =50769,
+		ReviveRank2 =50768,
+		ReviveRank3 =50767,
+		ReviveRank4 =50766,
+		ReviveRank5 =50765,
+		ReviveRank6 =50764,
+		ReviveRank7 =50763,
 		Swiftmend = 18562,
 		TranquilityRank1 = 740,
 		TranquilityRank2 = 8918,
@@ -391,45 +336,20 @@ local ConROC_Druid, optionMaxIds = ...;
 		TranquilityRank5 = 26983,
 		TranquilityRank6 = 48446,
 		TranquilityRank7 = 48447,
+
+		TreeofLife = 33891,
 	}
-	ids.Resto_Talent = {
-		ImprovedMarkoftheWild = 1,
-		NaturesFocus = 2,
-		Furor = 3,
-		
-		Naturalist = 4,
-		Subtlety = 5,
-		NaturalShapeshifter = 6,
+	ids.Player_Buff = {
+		eclipseLunar = 48518,
+		eclipseSolar = 48517,
+		omenofClarity = 16864,
+	}
+	ids.Player_Debuff = {
 
-		Intensity = 7,
-		OmenofClarity = 8,
-		MasterShapeshifter = 9,
-		 
-		TranquilSpirit = 10,
-		ImprovedRejuvenation = 11,
-		 
-		NaturesSwiftness = 12,
-		GiftofNature = 13,
-		ImprovedTranquility = 14,
-
-		EmpoweredTouch = 15,
-		NaturesBounty = 16,
-
-		LivingSpirit = 17,
-		Swiftmend = 18,
-		NaturalPerfection = 19,
-
-		EmpoweredRejuvenation = 20,
-		LivingSeed = 21,
-
-		Revitalize = 22,
-		TreeofLife = 23,
-		ImprovedTreeofLife = 24,
-
-		ImprovedBarkskin = 25,
-		GiftoftheEarthmother = 26,
-
-		WildGrowth = 27,		
+	}
+	ids.Target_Debuff = {
+		InsectSwarmRank = 48468,
+	
 	}
 	ids.optionMaxIds = {
 		

@@ -1,7 +1,7 @@
 ## Title:-|cffFFFFFFConROC|r- |cffFF7D0ADruid|r
-## Version: 1.13.5
-## Author: Vae
-## Interface: 20501
+## Version: 2.0.2
+## Author: Vae 2.0.2 updated by Lith
+## Interface: 30401
 ## SavedVariablesPerCharacter: ConROCDruidSpells
 ## Dependencies: ConROC
 ## LoadOnDemand: 1

@@ -1,24 +1,92 @@
+local printTalentsMode = false
+
+-- Slash command for printing talent tree with talent names and ID numbers
+SLASH_CONROCPRINTTALENTS1 = "/ConROCPT"
+SlashCmdList["CONROCPRINTTALENTS"] = function()
+    printTalentsMode = not printTalentsMode
+    ConROC:PopulateTalentIDs()
+end
+
 ConROC.Priest = {};
 
 local ConROC_Priest, ids = ...;
 local ConROC_Priest, optionMaxIds = ...;
+local currentSpecName
 
-	local Racial, Spec, Caster, Disc_Ability, Disc_Talent, Holy_Ability, Holy_Talent, Shad_Ability, Shad_Talent, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Caster, ids.Disc_Ability, ids.Disc_Talent, ids.Holy_Ability, ids.Holy_Talent, ids.Shad_Ability, ids.Shad_Talent, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;
+function ConROC:EnableDefenseModule()
+	self.NextDef = ConROC.Priest.Defense;
+end
 
+function ConROC:UNIT_SPELLCAST_SUCCEEDED(event, unitID, lineID, spellID)
+	if unitID == 'player' then
+		self.lastSpellId = spellID;
+	end
+end
+
+function ConROC:PopulateTalentIDs()
+    local numTabs = GetNumTalentTabs()
+    
+    for tabIndex = 1, numTabs do
+        local tabName = GetTalentTabInfo(tabIndex) .. "_Talent"
+        tabName = string.gsub(tabName, "%s", "") -- Remove spaces from tab name
+        if printTalentsMode then
+        	print(tabName..": ")
+        else
+        	ids[tabName] = {}
+    	end
+        
+        local numTalents = GetNumTalents(tabIndex)
+
+        for talentIndex = 1, numTalents do
+            local name, _, _, _, _ = GetTalentInfo(tabIndex, talentIndex)
+
+            if name then
+                local talentID = string.gsub(name, "%s", "") -- Remove spaces from talent name
+                if printTalentsMode then
+                	print(talentID .." = ID no: ", talentIndex)
+                else
+                	ids[tabName][talentID] = talentIndex
+                end
+            end
+        end
+    end
+    if printTalentsMode then printTalentsMode = false end
+end
+ConROC:PopulateTalentIDs()
+
+local Racial, Spec, Caster, Disc_Ability, Disc_Talent, Holy_Ability, Holy_Talent, Shad_Ability, Shad_Talent, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Caster, ids.Disc_Ability, ids.Discipline_Talent, ids.Holy_Ability, ids.Holy_Talent, ids.Shad_Ability, ids.Shadow_Talent, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;
+
+function ConROC:SpecUpdate()
+	currentSpecName = ConROC:currentSpec()
+
+	if currentSpecName then
+	   ConROC:Print(self.Colors.Info .. "Current spec:", self.Colors.Success ..  currentSpecName)
+	else
+	   ConROC:Print(self.Colors.Error .. "You do not currently have a spec.")
+	end
+end
+ConROC:SpecUpdate()
+	
+	--Discipline
 	local _DispelMagic = Disc_Ability.DispelMagicRank1;
 	local _DivineSpirit = Disc_Ability.DivineSpiritRank1;
 	local _FearWard = Disc_Ability.FearWard; --new
 	local _InnerFire = Disc_Ability.InnerFireRank1;
-	local _ManaBurn = Disc_Ability.ManaBurnRank1;
-	local _PrayerofFortitude = Disc_Ability.PrayerofFortitudeRank1; --new
-	local _PrayerofSpirit = Disc_Ability.PrayerofSpiritRank1;
+	local _InnerFocus = Disc_Ability.InnerFocus;
+	local _Levitate = Disc_Ability.Levitate;
+	local _ManaBurn = Disc_Ability.ManaBurn;
+	local _MassDispel = Disc_Ability.MassDispel;
+	local _PowerInfusion = Disc_Ability.PowerInfusion;
 	local _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank1;
 	local _PowerWordShield = Disc_Ability.PowerWordShieldRank1;
+	local _PrayerofFortitude = Disc_Ability.PrayerofFortitudeRank1; --new
+	local _PrayerofSpirit = Disc_Ability.PrayerofSpiritRank1;
 	local _ShackleUndead = Disc_Ability.ShackleUndeadRank1;
-	
+	--Holy
 	local _AbolishDisease = Holy_Ability.CureDisease;
 	local _BindingHeal = Holy_Ability.BindingHealRank1; --new
 	local _BlessedHealing = Holy_Ability.BlessedHealing; --new
+	local _CureDisease = Holy_Ability.CureDisease;
 	local _DivineHymn = Holy_Ability.DivineHymn;
 	local _EmpoweredRenew = Holy_Ability.EmpoweredRenew;
 	local _FlashHeal = Holy_Ability.FlashHealRank1;
@@ -34,7 +102,8 @@ local ConROC_Priest, optionMaxIds = ...;
 	local _Renew = Holy_Ability.RenewRank1;
 	local _Resurrection = Holy_Ability.ResurrectionRank1;
 	local _Smite = Holy_Ability.SmiteRank1;
-	
+	--Shadow
+	local _DevouringPlague = Shad_Ability.DevouringPlagueRank1;
 	local _Fade = Shad_Ability.Fade;
 	local _MindBlast = Shad_Ability.MindBlastRank1;
 	local _MindControl = Shad_Ability.MindControl;
@@ -48,14 +117,30 @@ local ConROC_Priest, optionMaxIds = ...;
 	local _ShadowWordDeath = Shad_Ability.ShadowWordDeathRank1;
 	local _ShadowWordPain = Shad_Ability.ShadowWordPainRank1;
 	local _Shadowfiend = Shad_Ability.Shadowfiend;
+	local _Shadowform = Shad_Ability.Shadowform;
+	local _Silence = Shad_Ability.Silence;
+	local _VampiricEmbrace = Shad_Ability.VampiricEmbrace;
+	local _VampiricTouch = Shad_Ability.VampiricTouchRank1;
+	local _ShadowWeaving = Player_Buff.ShadowWeavingRank1;
 
 	
 --Ranks
+	if IsSpellKnown(Disc_Ability.DispelMagicRank2) then _DispelMagic = Disc_Ability.DispelMagicRank2; end	
+	
 	if IsSpellKnown(Disc_Ability.DivineSpiritRank6) then _DivineSpirit = Disc_Ability.DivineSpiritRank6;
 	elseif IsSpellKnown(Disc_Ability.DivineSpiritRank5) then _DivineSpirit = Disc_Ability.DivineSpiritRank5;
 	elseif IsSpellKnown(Disc_Ability.DivineSpiritRank4) then _DivineSpirit = Disc_Ability.DivineSpiritRank4;
 	elseif IsSpellKnown(Disc_Ability.DivineSpiritRank3) then _DivineSpirit = Disc_Ability.DivineSpiritRank3;	
 	elseif IsSpellKnown(Disc_Ability.DivineSpiritRank2) then _DivineSpirit = Disc_Ability.DivineSpiritRank2; end
+
+	if IsSpellKnown(Disc_Ability.InnerFireRank9) then _InnerFire = Disc_Ability.InnerFireRank9;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank8) then _InnerFire = Disc_Ability.InnerFireRank8;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank7) then _InnerFire = Disc_Ability.InnerFireRank7;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank6) then _InnerFire = Disc_Ability.InnerFireRank6;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank5) then _InnerFire = Disc_Ability.InnerFireRank5;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank4) then _InnerFire = Disc_Ability.InnerFireRank4;
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank3) then _InnerFire = Disc_Ability.InnerFireRank3;	
+	elseif IsSpellKnown(Disc_Ability.InnerFireRank2) then _InnerFire = Disc_Ability.InnerFireRank2; end	
 
 	if IsSpellKnown(Disc_Ability.PowerWordFortitudeRank8) then _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank8;
 	elseif IsSpellKnown(Disc_Ability.PowerWordFortitudeRank7) then _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank7;
@@ -64,6 +149,20 @@ local ConROC_Priest, optionMaxIds = ...;
 	elseif IsSpellKnown(Disc_Ability.PowerWordFortitudeRank4) then _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank4;
 	elseif IsSpellKnown(Disc_Ability.PowerWordFortitudeRank3) then _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank3;	
 	elseif IsSpellKnown(Disc_Ability.PowerWordFortitudeRank2) then _PowerWordFortitude = Disc_Ability.PowerWordFortitudeRank2; end
+
+	if IsSpellKnown(Disc_Ability.PowerWordShieldRank14) then _PowerWordShield = Disc_Ability.PowerWordShieldRank14;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank13) then _PowerWordShield = Disc_Ability.PowerWordShieldRank13;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank12) then _PowerWordShield = Disc_Ability.PowerWordShieldRank12;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank11) then _PowerWordShield = Disc_Ability.PowerWordShieldRank11;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank10) then _PowerWordShield = Disc_Ability.PowerWordShieldRank10;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank9) then _PowerWordShield = Disc_Ability.PowerWordShieldRank9;	
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank8) then _PowerWordShield = Disc_Ability.PowerWordShieldRank8;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank7) then _PowerWordShield = Disc_Ability.PowerWordShieldRank7;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank6) then _PowerWordShield = Disc_Ability.PowerWordShieldRank6;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank5) then _PowerWordShield = Disc_Ability.PowerWordShieldRank5;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank4) then _PowerWordShield = Disc_Ability.PowerWordShieldRank4;
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank3) then _PowerWordShield = Disc_Ability.PowerWordShieldRank3;	
+	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank2) then _PowerWordShield = Disc_Ability.PowerWordShieldRank2; end
 
 	--new
 	if IsSpellKnown(Disc_Ability.PrayerofFortitudeRank4) then _PrayerofFortitude = Disc_Ability.PrayerofFortitudeRank4;
@@ -77,6 +176,8 @@ local ConROC_Priest, optionMaxIds = ...;
 	if IsSpellKnown(Disc_Ability.ShackleUndeadRank3) then _ShackleUndead = Disc_Ability.ShackleUndeadRank3;	
 	elseif IsSpellKnown(Disc_Ability.ShackleUndeadRank2) then _ShackleUndead = Disc_Ability.ShackleUndeadRank2; end
 	
+	if IsSpellKnown(Holy_Ability.AbolishDisease) then _AbolishDisease = Holy_Ability.AbolishDisease; end
+
 	--new
 	if IsSpellKnown(Holy_Ability.BindingHealRank3) then _BindingHeal = Holy_Ability.BindingHealRank3;
 	elseif IsSpellKnown(Holy_Ability.BindingHealRank2) then _BindingHeal = Holy_Ability.BindingHealRank2; end	
@@ -178,6 +279,16 @@ local ConROC_Priest, optionMaxIds = ...;
 	elseif IsSpellKnown(Holy_Ability.SmiteRank3) then _Smite = Holy_Ability.SmiteRank3;
 	elseif IsSpellKnown(Holy_Ability.SmiteRank2) then _Smite = Holy_Ability.SmiteRank2; end
 
+	if IsSpellKnown(Shad_Ability.DevouringPlagueRank9) then _DevouringPlague = Shad_Ability.DevouringPlagueRank9;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank8) then _DevouringPlague = Shad_Ability.DevouringPlagueRank8;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank7) then _DevouringPlague = Shad_Ability.DevouringPlagueRank7;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank6) then _DevouringPlague = Shad_Ability.DevouringPlagueRank6;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank5) then _DevouringPlague = Shad_Ability.DevouringPlagueRank5;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank4) then _DevouringPlague = Shad_Ability.DevouringPlagueRank4;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank3) then _DevouringPlague = Shad_Ability.DevouringPlagueRank3;
+	elseif IsSpellKnown(Shad_Ability.DevouringPlagueRank2) then _DevouringPlague = Shad_Ability.DevouringPlagueRank2; end
+	
+	
 	if IsSpellKnown(Shad_Ability.MindBlastRank13) then _MindBlast = Shad_Ability.MindBlastRank13;
 	elseif IsSpellKnown(Shad_Ability.MindBlastRank12) then _MindBlast = Shad_Ability.MindBlastRank12;
 	elseif IsSpellKnown(Shad_Ability.MindBlastRank11) then _MindBlast = Shad_Ability.MindBlastRank11;
@@ -207,9 +318,9 @@ local ConROC_Priest, optionMaxIds = ...;
 	if IsSpellKnown(Shad_Ability.PrayerofShadowProtectionRank3) then _PrayerofShadowProtection = Shad_Ability.PrayerofShadowProtectionRank3;
 	elseif IsSpellKnown(Shad_Ability.PrayerofShadowProtectionRank2) then _PrayerofShadowProtection = Shad_Ability.PrayerofShadowProtectionRank2; end
 	
-	if IsSpellKnown(Shad_Ability.PsychicScreamRank4) then _PsychicScream  = Shad_Ability._PsychicScreamRank4;
-	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank3) then _PsychicScream  = Shad_Ability._PsychicScreamRank3;
-	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank2) then _PsychicScream  = Shad_Ability._PsychicScreamRank2; end
+	if IsSpellKnown(Shad_Ability.PsychicScreamRank4) then _PsychicScream  = Shad_Ability.PsychicScreamRank4;
+	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank3) then _PsychicScream  = Shad_Ability.PsychicScreamRank3;
+	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank2) then _PsychicScream  = Shad_Ability.PsychicScreamRank2; end
 
 	if IsSpellKnown(Shad_Ability.ShadowProtectionRank5) then _ShadowProtection = Shad_Ability.ShadowProtectionRank5;
 	elseif IsSpellKnown(Shad_Ability.ShadowProtectionRank4) then _ShadowProtection = Shad_Ability.ShadowProtectionRank4;
@@ -232,15 +343,71 @@ local ConROC_Priest, optionMaxIds = ...;
 	elseif IsSpellKnown(Shad_Ability.ShadowWordPainRank3) then _ShadowWordPain = Shad_Ability.ShadowWordPainRank3;
 	elseif IsSpellKnown(Shad_Ability.ShadowWordPainRank2) then _ShadowWordPain = Shad_Ability.ShadowWordPainRank2; end
 
+	if IsSpellKnown(Player_Buff.ShadowWeavingRank3) then _ShadowWeaving = Player_Buff.ShadowWeavingRank3;	
+	elseif IsSpellKnown(Player_Buff.ShadowWeavingRank2) then _ShadowWeaving = Player_Buff.ShadowWeavingRank2; end
+	
+	if IsSpellKnown(Shad_Ability.VampiricTouchRank5) then _VampiricTouch = Shad_Ability.VampiricTouchRank5;
+	elseif IsSpellKnown(Shad_Ability.VampiricTouchRank4) then _VampiricTouch = Shad_Ability.VampiricTouchRank4;
+	elseif IsSpellKnown(Shad_Ability.VampiricTouchRank3) then _VampiricTouch = Shad_Ability.VampiricTouchRank3;
+	elseif IsSpellKnown(Shad_Ability.VampiricTouchRank2) then _VampiricTouch = Shad_Ability.VampiricTouchRank2; end
+
 --OptionIDs
 	ids.optionMaxIds = {
-		ShadowWordPain = _ShadowWordPain,
-		MindFlay = _MindFlay,
-		HolyFire = _HolyFire,
-		VampiricEmbrace = Shad_Ability.VampiricEmbrace,
-		PowerWordFortitude = _PowerWordFortitude,
-		ShadowProtection = _ShadowProtection,
-		DivineSpirit = _DivineSpirit
+	--Discipline
+	DispelMagic = _DispelMagic,
+	DivineSpirit = _DivineSpirit,
+	FearWard = _FearWard,
+	InnerFire = _InnerFire,
+	InnerFocus = _InnerFocus,
+	Levitate = _Levitate,
+	ManaBurn = _ManaBurn,
+	MassDispel = _MassDispel,
+	PowerInfusion = _PowerInfusion,
+	PowerWordFortitude = _PowerWordFortitude,
+	PowerWordShield = _PowerWordShield,
+	PrayerofFortitude = _PrayerofFortitude,
+	PrayerofSpirit = _PrayerofSpirit,
+	ShackleUndead = _ShackleUndead,
+	--Holy
+	AbolishDisease = _AbolishDisease,
+	BindingHeal = _BindingHeal,
+	BlessedHealing = _BlessedHealing,
+	CureDisease = _CureDisease,
+	DivineHymn = _DivineHymn,
+	EmpoweredRenew = _EmpoweredRenew,
+	FlashHeal = _FlashHeal,
+	GreaterHeal = _GreaterHeal,
+	Heal = _Heal,
+	HolyFire = _HolyFire,
+	HolyNova = _HolyNova,
+	HymnofHope = _HymnofHope,
+	LesserHeal = _LesserHeal,
+	Lightwell = _Lightwell,
+	PrayerofHealing = _PrayerofHealing,
+	PrayerofMending = _PrayerofMending,
+	Renew = _Renew,
+	Resurrection = _Resurrection,
+	Smite = _Smite,
+	--Shadow
+	DevouringPlague = _DevouringPlague,
+	Fade = _Fade,
+	MindBlast = _MindBlast,
+	MindControl = _MindControl,
+	MindFlay = _MindFlay,
+	MindSear = _MindSear,
+	MindSoothe = _MindSoothe,
+	MindVision = _MindVision,
+	PrayerofShadowProtection = _PrayerofShadowProtection,
+	PsychicScream = _PsychicScream,
+	ShadowProtection = _ShadowProtection,
+	ShadowWordDeath = _ShadowWordDeath,
+	ShadowWordPain = _ShadowWordPain,
+	Shadowfiend = _Shadowfiend,
+	Shadowform = _Shadowform,
+	Silence = _Silence,
+	VampiricEmbrace = _VampiricEmbrace,
+	VampiricTouch = _VampiricTouch,
+	ShadowWeaving = _ShadowWeaving,
 	}
 
 
@@ -249,21 +416,26 @@ function ConROC:EnableRotationModule()
 	self.NextSpell = ConROC.Priest.Damage;
 
 	self:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
+	self:RegisterEvent("PLAYER_TALENT_UPDATE");
 	self.lastSpellId = 0;
 	
 	ConROC:SpellmenuClass();
---	ConROCSpellmenuFrame:Hide();
 end
-
-function ConROC:EnableDefenseModule()
-	self.NextDef = ConROC.Priest.Defense;
-end
-
-function ConROC:UNIT_SPELLCAST_SUCCEEDED(event, unitID, lineID, spellID)
-	if unitID == 'player' then
-		self.lastSpellId = spellID;
+function ConROC:PLAYER_TALENT_UPDATE()
+	ConROC:SpecUpdate();
+	if ConROCSpellmenuFrame:IsVisible() then
+		ConROCSpellmenuFrame_CloseButton:Hide();
+		ConROCSpellmenuFrame_Title:Hide();
+		ConROCSpellmenuClass:Hide();
+		ConROCSpellmenuFrame_OpenButton:Show();
+		optionsOpened = false;
+		ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
+	else
+		ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
 	end
 end
+
+
 
 function ConROC.Priest.Damage(_, timeShift, currentSpell, gcd)
 --Character
@@ -276,19 +448,12 @@ function ConROC.Priest.Damage(_, timeShift, currentSpell, gcd)
 	local manaMax		= UnitPowerMax('player', Enum.PowerType.Mana);
 	local manaPercent	= math.max(0, mana) / math.max(1, manaMax) * 100;
 	
---Abilities	
-	local dSpiritRDY		= ConROC:AbilityReady(_DivineSpirit, timeShift);
-		local dSpiritBUFF	= ConROC:Buff(_DivineSpirit, timeShift);	
-	local iFocusRDY			= ConROC:AbilityReady(Disc_Ability.InnerFocus, timeShift);	
-	local leviRDY			= ConROC:AbilityReady(Disc_Ability.Levitate, timeShift);	
-	local mDispelRDY		= ConROC:AbilityReady(Disc_Ability.MassDispel, timeShift); --new
+--Abilities		
+	local iFocusRDY			= ConROC:AbilityReady(_InnerFocus, timeShift);	
+	local leviRDY			= ConROC:AbilityReady(_Levitate, timeShift);	
+	local mDispelRDY		= ConROC:AbilityReady(_MassDispel, timeShift); --new
 	local mBurnRDY			= ConROC:AbilityReady(_ManaBurn, timeShift);	
-	local pInfusRDY			= ConROC:AbilityReady(Disc_Ability.PowerInfusion, timeShift);	
-	local pofsRDY			= ConROC:AbilityReady(_PrayerofSpirit, timeShift);	
-	local pwfRDY			= ConROC:AbilityReady(_PowerWordFortitude, timeShift);	
-		local pwfBUFF		= ConROC:Buff(_PowerWordFortitude, timeShift);
-	local poffRDY			= ConROC:AbilityReady(_PrayerofFortitude, timeShift);	--new	
-		local poffBUFF		= ConROC:Buff(_PrayerofFortitude, timeShift);	--new
+	local pInfusRDY			= ConROC:AbilityReady(_PowerInfusion, timeShift);
 	local sUndeadRDY		= ConROC:AbilityReady(_ShackleUndead, timeShift);
 		local sUndeadDEBUFF	= ConROC:TargetDebuff(_ShackleUndead, timeShift);
 		
@@ -307,52 +472,73 @@ function ConROC.Priest.Damage(_, timeShift, currentSpell, gcd)
 	local smiteRDY			= ConROC:AbilityReady(_Smite, timeShift);
 
 	local mBlastRDY			= ConROC:AbilityReady(_MindBlast, timeShift);
+	local dPlagueRDY		= ConROC:AbilityReady(_DevouringPlague, timeShift);
+		local dPlagueDEBUFF	= ConROC:TargetDebuff(_DevouringPlague, timeShift);
 	local mControlRDY		= ConROC:AbilityReady(_MindControl, timeShift);
 	local mFlayRDY			= ConROC:AbilityReady(_MindFlay, timeShift);
+	local mSearRDY			= ConROC:AbilityReady(_MindSear, timeShift);
 	local mSootheRDY		= ConROC:AbilityReady(_MindSoothe, timeShift);
 	local mVisionRDY		= ConROC:AbilityReady(_MindVision, timeShift);
 	local swpRDY			= ConROC:AbilityReady(_ShadowWordPain, timeShift);
 		local swpDebuff		= ConROC:TargetDebuff(_ShadowWordPain, timeShift);
-	local sFormRDY			= ConROC:AbilityReady(Shad_Ability.Shadowform, timeShift);
-		local sFormBUFF		= ConROC:Form(Shad_Ability.Shadowform);
-	local silRDY			= ConROC:AbilityReady(Shad_Ability.Silence, timeShift);
-	local vEmbraceRDY		= ConROC:AbilityReady(Shad_Ability.VampiricEmbrace, timeShift);
-		local vEmbraceBuff	= ConROC:Buff(Shad_Ability.VampiricEmbrace, timeShift);
+	local sFormRDY			= ConROC:AbilityReady(_Shadowform, timeShift);
+		local sFormBUFF		= ConROC:Form(_Shadowform);
+	local silRDY			= ConROC:AbilityReady(_Silence, timeShift);
+	local vEmbraceRDY		= ConROC:AbilityReady(_VampiricEmbrace, timeShift);
+		local vEmbraceBuff	= ConROC:Buff(_VampiricEmbrace, timeShift);
+	local vTouchRDY			= ConROC:AbilityReady(_VampiricTouch, timeShift);
+		local vTouchDebuff	= ConROC:TargetDebuff(_VampiricTouch, timeShift);
+
+	local sWeavingBUFF, sWeavingCount	= ConROC:Buff(_ShadowWeaving, timeShift);
 	
 --Conditions	
 	local isEnemy			= ConROC:TarHostile();
 	local targetPh			= ConROC:PercentHealth('target');	
 	local moving			= ConROC:PlayerSpeed();
 	local incombat			= UnitAffectingCombat('player');	
-	local Close			= CheckInteractDistance("target", 3);
+	local Close				= CheckInteractDistance("target", 3);
 	local hasWand			= HasWandEquipped();
 	
 --Indicators
 	ConROC:AbilityRaidBuffs(_PowerWordFortitude, ConROC:CheckBox(ConROC_SM_Buff_PowerWordFortitude) and pwfRDY and not pwfBUFF);
 	ConROC:AbilityRaidBuffs(_DivineSpirit, ConROC:CheckBox(ConROC_SM_Buff_DivineSpirit) and dSpiritRDY and not dSpiritBUFF);
 	
-	ConROC:AbilityBurst(Disc_Ability.InnerFocus, iFocusRDY and mBlastRDY and isEnemy);
+	ConROC:AbilityBurst(_InnerFocus, iFocusRDY and mBlastRDY and isEnemy);
 --Warnings	
 
 
---Rotations	
+--Rotations
+	if plvl < 10 then
+		if ConROC:CheckBox(ConROC_SM_Debuff_ShadowWordPain) and swpRDY and not swpDebuff then
+			return _ShadowWordPain;
+		end
+		if smiteRDY then
+			return _Smite;
+		end
+	end
 	if sFormRDY and not sFormBUFF then
-		return Shad_Ability.Shadowform;
+		return _Shadowform;
 	end
 	
-	if sFormBUFF then
-		if not incombat then
-			if mBlastRDY and currentSpell ~= _MindBlast then
-				return _MindBlast;
-			end
+	if isEnemy and sFormBUFF then
+		if vTouchRDY and not vTouchDebuff then
+			return _VampiricTouch
 		end
-
+		if dPlagueRDY and not dPlagueDEBUFF then
+			return _DevouringPlague;
+		end
+		if mBlastRDY and currentSpell ~= _MindBlast and sWeavingCount < 5 then
+			return _MindBlast;
+		end
+		if mFlayRDY and currentSpell ~= _MindFlay and sWeavingCount < 5 then
+			return _MindFlay;
+		end
 		if ConROC:CheckBox(ConROC_SM_Debuff_ShadowWordPain) and swpRDY and not swpDebuff then
 			return _ShadowWordPain;
 		end
 
 		if ConROC:CheckBox(ConROC_SM_Debuff_VampiricEmbrace) and vEmbraceRDY and not vEmbraceBuff then
-			return Shad_Ability.VampiricEmbrace;
+			return _VampiricEmbrace;
 		end
 
 		if ConROC:CheckBox(ConROC_SM_Option_UseWand) and hasWand and (manaPercent <= 20 or targetPh <= 5) then
@@ -362,7 +548,9 @@ function ConROC.Priest.Damage(_, timeShift, currentSpell, gcd)
 		if mBlastRDY and currentSpell ~= _MindBlast then
 			return _MindBlast;
 		end
-		
+		if ConROC_AoEButton:IsVisible() and ConROC:CheckBox(ConROC_SM_Debuff_MindFlay) and mSearRDY then
+			return _MindSear;
+		end
 		if ConROC:CheckBox(ConROC_SM_Debuff_MindFlay) and mFlayRDY then
 			return _MindFlay;
 		end
@@ -379,16 +567,20 @@ function ConROC.Priest.Damage(_, timeShift, currentSpell, gcd)
 			end
 		end
 
-		if ConROC:CheckBox(ConROC_SM_Debuff_ShadowWordPain) and swpRDY and not swpDebuff then
-			return _ShadowWordPain;
-		end
-
 		if ConROC:CheckBox(ConROC_SM_Debuff_VampiricEmbrace) and vEmbraceRDY and not vEmbraceDebuff then
-			return Shad_Ability.VampiricEmbrace;
+			return _VampiricEmbrace;
 		end
 		
 		if ConROC:CheckBox(ConROC_SM_Debuff_HolyFire) and hFireRDY and not hFireDebuff and currentSpell ~= _HolyFire then
 			return _HolyFire;
+		end
+
+		if dPlagueRDY and not dPlagueDEBUFF then
+			return _DevouringPlague;
+		end
+
+		if ConROC:CheckBox(ConROC_SM_Debuff_ShadowWordPain) and swpRDY and not swpDebuff then
+			return _ShadowWordPain;
 		end
 
 		if ConROC:CheckBox(ConROC_SM_Option_UseWand) and hasWand and (manaPercent <= 20 or targetPh <= 5) then
@@ -420,47 +612,19 @@ function ConROC.Priest.Defense(_, timeShift, currentSpell, gcd)
 --Resources
 	local mana			= UnitPower('player', Enum.PowerType.Mana);
 	local manaMax			= UnitPowerMax('player', Enum.PowerType.Mana);
-
---Ranks
-	if IsSpellKnown(Disc_Ability.DispelMagicRank2) then _DispelMagic = Disc_Ability.DispelMagicRank2; end	
-
-	if IsSpellKnown(Disc_Ability.InnerFireRank9) then _InnerFire = Disc_Ability.InnerFireRank9;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank8) then _InnerFire = Disc_Ability.InnerFireRank8;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank7) then _InnerFire = Disc_Ability.InnerFireRank7;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank6) then _InnerFire = Disc_Ability.InnerFireRank6;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank5) then _InnerFire = Disc_Ability.InnerFireRank5;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank4) then _InnerFire = Disc_Ability.InnerFireRank4;
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank3) then _InnerFire = Disc_Ability.InnerFireRank3;	
-	elseif IsSpellKnown(Disc_Ability.InnerFireRank2) then _InnerFire = Disc_Ability.InnerFireRank2; end	
-
-	if IsSpellKnown(Disc_Ability.PowerWordShieldRank14) then _PowerWordShield = Disc_Ability.PowerWordShieldRank14;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank13) then _PowerWordShield = Disc_Ability.PowerWordShieldRank13;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank12) then _PowerWordShield = Disc_Ability.PowerWordShieldRank12;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank11) then _PowerWordShield = Disc_Ability.PowerWordShieldRank11;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank10) then _PowerWordShield = Disc_Ability.PowerWordShieldRank10;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank9) then _PowerWordShield = Disc_Ability.PowerWordShieldRank9;	
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank8) then _PowerWordShield = Disc_Ability.PowerWordShieldRank8;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank7) then _PowerWordShield = Disc_Ability.PowerWordShieldRank7;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank6) then _PowerWordShield = Disc_Ability.PowerWordShieldRank6;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank5) then _PowerWordShield = Disc_Ability.PowerWordShieldRank5;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank4) then _PowerWordShield = Disc_Ability.PowerWordShieldRank4;
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank3) then _PowerWordShield = Disc_Ability.PowerWordShieldRank3;	
-	elseif IsSpellKnown(Disc_Ability.PowerWordShieldRank2) then _PowerWordShield = Disc_Ability.PowerWordShieldRank2; end
-
-	if IsSpellKnown(Holy_Ability.AbolishDisease) then _AbolishDisease = Holy_Ability.AbolishDisease; end
-
-	if IsSpellKnown(Shad_Ability.PsychicScreamRank4) then _PsychicScream = Shad_Ability.PsychicScreamRank4;
-	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank3) then _PsychicScream = Shad_Ability.PsychicScreamRank3;
-	elseif IsSpellKnown(Shad_Ability.PsychicScreamRank2) then _PsychicScream = Shad_Ability.PsychicScreamRank2; end
 	
-	if IsSpellKnown(Shad_Ability.ShadowProtectionRank4) then _ShadowProtection = Shad_Ability.ShadowProtectionRank4;
-	elseif IsSpellKnown(Shad_Ability.ShadowProtectionRank3) then _ShadowProtection = Shad_Ability.ShadowProtectionRank3;
-	elseif IsSpellKnown(Shad_Ability.ShadowProtectionRank2) then _ShadowProtection = Shad_Ability.ShadowProtectionRank2; end
-	
---Abilities	
+--Abilities
+	local dSpiritRDY		= ConROC:AbilityReady(_DivineSpirit, timeShift);
+		local dSpiritBUFF	= ConROC:Buff(_DivineSpirit, timeShift);	
 	local dMagicRDY			= ConROC:AbilityReady(_DispelMagic, timeShift);
 	local iFireRDY			= ConROC:AbilityReady(_InnerFire, timeShift);
-		local iFireBUFF		= ConROC:Buff(_InnerFire, timeShift);	
+		local iFireBUFF		= ConROC:Buff(_InnerFire, timeShift);
+	local pofsRDY			= ConROC:AbilityReady(_PrayerofSpirit, timeShift);	
+		local pofsBUFF		= ConROC:Buff(_PrayerofSpirit, timeShift);	
+	local pwfRDY			= ConROC:AbilityReady(_PowerWordFortitude, timeShift);	
+		local pwfBUFF		= ConROC:Buff(_PowerWordFortitude, timeShift);
+	local poffRDY			= ConROC:AbilityReady(_PrayerofFortitude, timeShift);	--new	
+		local poffBUFF		= ConROC:Buff(_PrayerofFortitude, timeShift);	--new
 	local pwsRDY			= ConROC:AbilityReady(_PowerWordShield, timeShift);
 		local pwsBUFF		= ConROC:Buff(_PowerWordShield, timeShift);
 		local wsDebuff		= ConROC:UnitAura(Player_Debuff.WeakendSoul, timeShift, 'player', 'HARMFUL');
@@ -470,7 +634,9 @@ function ConROC.Priest.Defense(_, timeShift, currentSpell, gcd)
 	local fadeRDY			= ConROC:AbilityReady(_Fade, timeShift);		
 	local psyScRDY			= ConROC:AbilityReady(_PsychicScream, timeShift);		
 	local sProtRDY			= ConROC:AbilityReady(_ShadowProtection, timeShift);
-		local sProtBUFF		= ConROC:Buff(_ShadowProtection, timeShift);	
+		local sProtBUFF		= ConROC:Buff(_ShadowProtection, timeShift);		
+	local pofsProtRDY			= ConROC:AbilityReady(_PrayerofShadowProtection, timeShift);
+		local pofsProtBUFF		= ConROC:Buff(_PrayerofShadowProtection, timeShift);
 	
 	
 --Conditions	
@@ -478,13 +644,31 @@ function ConROC.Priest.Defense(_, timeShift, currentSpell, gcd)
 	local playerPh			= ConROC:PercentHealth('player');
 	local targetPh			= ConROC:PercentHealth('target');
 	
---Rotations		
+--Rotations
+	if dSpiritRDY and not (pofsBUFF or dSpiritBUFF) and UnitAffectingCombat("player") then
+		return _DivineSpirit;
+	end
+	if pofsRDY and not (pofsBUFF or dSpiritBUFF) and UnitInParty("player") then
+		return _PrayerofSpirit;
+	end
+
+	if pwfRDY and not (poffBUFF or pwfBUFF) and UnitAffectingCombat("player") then
+		return _PowerWordFortitude;
+	end
+	if poffsRDY and not (poffBUFF or pwfBUFF) and UnitInParty("player") then
+		return _PrayerofFortitude;
+	end
+
 	if iFireRDY and not iFireBUFF then
 		return _InnerFire;
 	end
 	
-	if ConROC:CheckBox(ConROC_SM_Buff_ShadowProtection) and sProtRDY and not sProtBUFF then
+	if ConROC:CheckBox(ConROC_SM_Buff_ShadowProtection) and sProtRDY and not (sProtBUFF or pofsProtBUFF) then
 		return _ShadowProtection;
+	end
+
+	if ConROC:CheckBox(ConROC_SM_Buff_ShadowProtection) and pofsProtRDY and not (sProtBUFF or pofsProtBUFF) and UnitInParty("player") then
+		return _PrayerofShadowProtection;
 	end	
 		
 	if pwsRDY and not pwsBUFF and not wsDebuff then

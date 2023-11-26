@@ -1,3 +1,12 @@
+local printTalentsMode = false
+
+-- Slash command for printing talent tree with talent names and ID numbers
+SLASH_CONROCPRINTTALENTS1 = "/ConROCPT"
+SlashCmdList["CONROCPRINTTALENTS"] = function()
+    printTalentsMode = not printTalentsMode
+    ConROC:PopulateTalentIDs()
+end
+
 ConROC.Warlock = {};
 
 local ConROC_Warlock, ids = ...;
@@ -17,9 +26,14 @@ function ConROC:PopulateTalentIDs()
     local numTabs = GetNumTalentTabs()
     
     for tabIndex = 1, numTabs do
-        local tabName = GetTalentTabInfo(tabIndex)
-        ids[tabName] = {}
-
+        local tabName = GetTalentTabInfo(tabIndex) .. "_Talent"
+        tabName = string.gsub(tabName, "%s", "") -- Remove spaces from tab name
+        if printTalentsMode then
+        	print(tabName..": ")
+        else
+        	ids[tabName] = {}
+    	end
+        
         local numTalents = GetNumTalents(tabIndex)
 
         for talentIndex = 1, numTalents do
@@ -27,22 +41,27 @@ function ConROC:PopulateTalentIDs()
 
             if name then
                 local talentID = string.gsub(name, "%s", "") -- Remove spaces from talent name
-                ids[tabName][talentID] = talentIndex
+                if printTalentsMode then
+                	print(talentID .." = ID no: ", talentIndex)
+                else
+                	ids[tabName][talentID] = talentIndex
+                end
             end
         end
     end
+    if printTalentsMode then printTalentsMode = false end
 end
 ConROC:PopulateTalentIDs()
 
-local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, Dest_Ability, Dest_Talent, Pet, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Caster, ids.Aff_Ability, ids.Affliction, ids.Demo_Ability, ids.Demonology, ids.Dest_Ability, ids.Destruction, ids.Pet, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;
+local Racial, Spec, Caster, Aff_Ability, Aff_Talent, Demo_Ability, Demo_Talent, Dest_Ability, Dest_Talent, Pet, Player_Buff, Player_Debuff, Target_Debuff = ids.Racial, ids.Spec, ids.Caster, ids.Aff_Ability, ids.Affliction_Talent, ids.Demo_Ability, ids.Demonology_Talent, ids.Dest_Ability, ids.Destruction_Talent, ids.Pet, ids.Player_Buff, ids.Player_Debuff, ids.Target_Debuff;
 
 function ConROC:SpecUpdate()
 	currentSpecName = ConROC:currentSpec()
 
 	if currentSpecName then
-	   print("Your current spec:", currentSpecName)
+	   ConROC:Print(self.Colors.Info .. "Current spec:", self.Colors.Success ..  currentSpecName)
 	else
-	   print("You do not currently have a spec.")
+	   ConROC:Print(self.Colors.Error .. "You do not currently have a spec.")
 	end
 end
 ConROC:SpecUpdate()
@@ -382,6 +401,16 @@ function ConROC:EnableRotationModule()
 end
 function ConROC:PLAYER_TALENT_UPDATE()
 	ConROC:SpecUpdate();
+    if ConROCSpellmenuFrame:IsVisible() then
+        ConROCSpellmenuFrame_CloseButton:Hide();
+        ConROCSpellmenuFrame_Title:Hide();
+        ConROCSpellmenuClass:Hide();
+        ConROCSpellmenuFrame_OpenButton:Show();
+        optionsOpened = false;
+        ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
+    else
+        ConROCSpellmenuFrame:SetSize((90) + 14, (15) + 14)
+    end
 end
 function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 --Character
@@ -524,9 +553,9 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 	if dLifeRDY and playerPh <= 30 then
 		return _DrainLife;
 	end
-	if IsEquippedItem(40432) and not UnitAffectingCombat("player") and iothCount <=9 and playerPh >= 30 then
+	if IsEquippedItem(40432) and not UnitAffectingCombat("player") and iothCount <=9 and playerPh >= 30 and ConROC:CheckBox(ConROC_SM_Option_PrePull) and ConROC:TarHostile() and ConROC:IsGlyphActive(63320) then
 		return _LifeTapRank1
-	elseif not (sotdBUFF or lifeTapBUFF) and not UnitAffectingCombat("player") and playerPh >= 30 then
+	elseif not (sotdBUFF or lifeTapBUFF) and not UnitAffectingCombat("player") and playerPh >= 30 and ConROC:TarHostile() and ConROC:IsGlyphActive(63320) then
 		return _LifeTapRank1;
 	end
 
@@ -636,8 +665,7 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 		if ConROC:CheckBox(ConROC_SM_Debuff_Corruption) and corrRDY and not corrDEBUFF and currentSpell ~= _Corruption and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
 			return _Corruption;
 		end
-	end
-	if (currentSpecName == "Demonology") then
+	elseif (currentSpecName == "Demonology") then
 		if ConROC:CheckBox(ConROC_SM_Curse_Doom) and cofdRDY and not cofdDEBUFF and ((ConROC:Raidmob() and targetPh >= 75) or (not ConROC:Raidmob() and targetPh == 100)) then 
 			return _CurseofDoom;
 		end
@@ -657,8 +685,7 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 			return _ShadowBolt;
 		end
 
-	end
-	if (currentSpecName == "Destruction") then
+	elseif (currentSpecName == "Destruction") then
 		if ConROC_AoEButton:IsVisible() then
 			if ConROC:CheckBox(ConROC_SM_AoE_SeedofCorruption) and seedRDY and not seedDEBUFF then
 				return _SeedofCorruption;
@@ -713,7 +740,33 @@ function ConROC.Warlock.Damage(_, timeShift, currentSpell, gcd)
 		if dSoulRDY and ConROC:SoulShards() < ConROC_SM_Option_SoulShard:GetNumber() and ((ConROC:Raidmob() and targetPh <= 5) or (not ConROC:Raidmob() and targetPh <= 20)) then --Soul Shard counter needed.
 			return _DrainSoul;
 		end
-
+    elseif plvl < 10 then
+        if sBoltRDY and not UnitAffectingCombat("player") then
+            return _ShadowBoltRank
+        end
+        if sBoltRDY and sTranceBUFF then
+            return _ShadowBolt;
+        end
+        if ConROC:CheckBox(ConROC_SM_Debuff_Corruption) and corrRDY and not corrDEBUFF and currentSpell ~= _Corruption and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
+            return _Corruption;
+        end
+        if ConROC:CheckBox(ConROC_SM_Curse_Weakness) and cofwRDY and not cofwDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
+            return _CurseofWeakness;
+        end
+        
+        if ConROC:CheckBox(ConROC_SM_Curse_Agony) and cofaRDY and not cofaDEBUFF and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then 
+            return _CurseofAgony;
+        end
+        if ConROC:CheckBox(ConROC_SM_Debuff_Immolate) and immoRDY and not immoDEBUFF and currentSpell ~= _Immolate and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
+            return _Immolate;
+        end
+        if ConROC:CheckBox(ConROC_SM_Spell_ShadowBolt) and sBoltRDY then
+            return _ShadowBolt;
+        end
+        if ConROC:CheckBox(ConROC_SM_Debuff_Corruption) and corrRDY and not corrDEBUFF and currentSpell ~= _Corruption and ((ConROC:Raidmob() and targetPh >= 5) or (not ConROC:Raidmob() and targetPh >= 20)) then
+            return _Corruption;
+        end
+        return nil;
 	end
 	return nil;
 end

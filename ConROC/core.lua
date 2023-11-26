@@ -669,7 +669,7 @@ function ConROC:OnInitialize()
 	ConROCButtonFrame:Hide();
 	
 	local _, _, Class = UnitClass("player")
-	if Class == 1 or Class == 2 or Class == 3 or Class == 4 or Class == 5 or Class == 8 or Class == 9 then
+	if Class == 1 or Class == 2 or Class == 3 or Class == 4 or Class == 5 or Class == 6 or Class == 7 or Class == 8 or Class == 9 or Class == 11 then
 		self.SpellmenuFrame();	
 	end
 	
@@ -841,7 +841,7 @@ function ConROC:PLAYER_ENTERING_WORLD()
 	self:UpdateButtonGlow();
 	if not self.rotationEnabled then
 		self:Print(self.Colors.Success .. 'Auto enable on login!');
-		self:Print(self.Colors.Info .. 'Loading class module');
+		self:Print(self.Colors.Info .. 'Loading '.. self.Classes[classIdv] ..' module');
 		self:LoadModule();
 		self:EnableRotation();
 		self:EnableDefense();
