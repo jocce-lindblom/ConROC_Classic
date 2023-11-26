@@ -524,7 +524,7 @@ function ConROC.Paladin.Damage(_, timeShift, currentSpell, gcd)
 --Warnings
 	
 --Rotations
-if plvl > 10 then
+if plvl < 10 then
 	if soRighteousness and not sorBuff then
 		return _SealofRighteousness;
 	end
