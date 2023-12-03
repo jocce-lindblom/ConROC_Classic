@@ -1,0 +1,11 @@
+## Title:-|cffFFFFFFConROC|r- |cffFFFFFFPriest|r
+## Version: 2.0.2
+## Author: Vae, 2.0.2 updated by Lith
+## Interface: 11500
+## SavedVariablesPerCharacter: ConROCPriestSpells
+## Dependencies: ConROC
+## LoadOnDemand: 1
+
+Classic_era\priest_ids.lua
+Classic_era\priest_spellmenu.lua
+Classic_era\priest.lua

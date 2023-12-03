@@ -1,3 +1,6 @@
+Ver 2.0.2
+	-Support for Classic And Classic Wrath
+	-Started to add support for translations.
 Ver 1.13.2
 	-Overhauled Rotation.
 

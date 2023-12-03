@@ -1,3 +1,6 @@
+Ver 2.0.2
+	-Support for Classic And Classic Wrath
+	-Started to add support for translations.
 Ver 2.0.0
 	-Added ranks to abilities that were missing.
 	-Added Bloodrage to Spellmenu.

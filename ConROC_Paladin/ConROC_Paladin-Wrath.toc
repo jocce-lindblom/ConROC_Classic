@@ -1,0 +1,11 @@
+## Title:-|cffFFFFFFConROC|r- |cffF58CBAPaladin|r
+## Version: 2.0.2
+## Author: Vae, 2.0.2 updated by Lith
+## Interface: 30403
+## SavedVariablesPerCharacter: ConROCPaladinSpells
+## Dependencies: ConROC
+## LoadOnDemand: 1
+
+Wrath\paladin_ids.lua
+Wrath\paladin_spellmenu.lua
+Wrath\paladin.lua

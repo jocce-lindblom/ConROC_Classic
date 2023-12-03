@@ -1,0 +1,11 @@
+## Title:-|cffFFFFFFConROC|r- |cffFFF569Rogue|r
+## Version: 1.14.0
+## Author: Vae, Updated by Lith
+## Interface: 11500
+## SavedVariablesPerCharacter: ConROCRogueSpells
+## Dependencies: ConROC
+## LoadOnDemand: 1
+
+Classic_era\rogue_ids.lua
+Classic_era\rogue_spellmenu.lua
+Classic_era\rogue.lua

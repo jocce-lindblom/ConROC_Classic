@@ -1,0 +1,11 @@
+## Title:-|cffFFFFFFConROC|r- |cffFFF569Rogue|r
+## Version: 2.0.2
+## Author: Vae, 2.0.2 updated by Lith
+## Interface: 30403
+## SavedVariablesPerCharacter: ConROCRogueSpells
+## Dependencies: ConROC
+## LoadOnDemand: 1
+
+Wrath\rogue_ids.lua
+Wrath\rogue_spellmenu.lua
+Wrath\rogue.lua

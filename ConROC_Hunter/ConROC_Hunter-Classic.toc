@@ -1,0 +1,11 @@
+## Title:-|cffFFFFFFConROC|r- |cffABD473Hunter|r
+## Version: 2.0.2
+## Author: Vae 2.0.2 updated by Lith
+## Interface: 11500
+## SavedVariablesPerCharacter: ConROCHunterSpells
+## Dependencies: ConROC
+## LoadOnDemand: 1
+
+Classic_era\hunter_ids.lua
+Classic_era\hunter_spellmenu.lua
+Classic_era\hunter.lua
